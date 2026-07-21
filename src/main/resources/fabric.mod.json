@@ -3,22 +3,19 @@
     "id": "customcross",
     "version": "${version}",
     "name": "CustomCross",
-    "description": "Полностью настраиваемый прицел (crosshair). Меняй форму, цвет, размер, толщину и прозрачность. Автосмена цвета при наведении на мобов и игроков. Rainbow-режим, пульсация и многое другое.",
+    "description": "Fully customizable crosshair mod. Change shape, color, size, thickness, gap, and opacity. Auto-change color when aiming at mobs, players, or blocks. Rainbow mode, pulsing effect, smooth color transitions, and a built-in crosshair library with 20+ presets. Draw your own crosshair pixel by pixel in the visual editor.",
     "authors": [
         "ponos_dinozavr"
     ],
     "contact": {
         "homepage": "https://discord.gg/WThDK2My7e",
-        "sources": "https://discord.gg/WThDK2My7e",
-        "issues": "https://discord.gg/WThDK2My7e"
+        "sources": "https://github.com/PonosDinozavr/CustomCross",
+        "issues": "https://github.com/PonosDinozavr/CustomCross/issues"
     },
     "license": "MIT",
     "icon": "assets/customcross/icon.png",
     "environment": "client",
     "entrypoints": {
-        "fabric-datagen": [
-            "org.example.bindManager.customcross.client.CustomCrossDataGenerator"
-        ],
         "client": [
             "org.example.bindManager.customcross.client.CustomCrossClient"
         ],
