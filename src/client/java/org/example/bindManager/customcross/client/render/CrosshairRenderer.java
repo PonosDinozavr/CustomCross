@@ -1,6 +1,5 @@
 package org.example.bindManager.customcross.client.render;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
@@ -31,19 +30,17 @@ public final class CrosshairRenderer {
 
         if (config.isCustomEnabled()) {
             renderCustom(context, tickCounter, config);
-            RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
         }
     }
 
     private static void renderCustom(DrawContext context, RenderTickCounter tickCounter, CrosshairConfig config) {
-        float tickDelta = tickCounter.getTickDelta(true);
+        float tickDelta = tickCounter.getTickProgress(true);
         int x = context.getScaledWindowWidth() / 2;
         int y = context.getScaledWindowHeight() / 2;
 
         String gif = config.getActiveGif();
         if (!gif.isEmpty()) {
             GifCrosshair.render(context, x, y, gif, config.getSize(), config.getOpacity());
-            RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
             return;
         }
 
@@ -69,7 +66,6 @@ public final class CrosshairRenderer {
 
         int renderColor = ColorUtils.applyAlpha(currentColor, currentAlpha);
         drawCrosshair(context, config, renderColor, x, y);
-        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
     }
 
     private static void drawCrosshair(DrawContext context, CrosshairConfig config, int color, int cx, int cy) {

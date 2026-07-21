@@ -1,8 +1,8 @@
 package org.example.bindManager.customcross.client.render;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.texture.NativeImageBackedTexture;
@@ -61,18 +61,11 @@ public final class GifCrosshair {
 
         int size = Math.max((int) (32 * scale), 4);
 
-        RenderSystem.enableBlend();
-        RenderSystem.defaultBlendFunc();
-        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, opacity);
-
         context.drawTexture(
-                net.minecraft.client.render.RenderLayer::getGuiTextured,
+                RenderPipelines.GUI_TEXTURED,
                 tex, cx - size / 2, cy - size / 2,
-                0, 0, size, size, size, size
+                0f, 0f, size, size, size, size
         );
-
-        MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers().draw();
-        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
         return true;
     }
 
@@ -82,18 +75,11 @@ public final class GifCrosshair {
 
         int size = Math.max((int) (32 * scale), 4);
 
-        RenderSystem.enableBlend();
-        RenderSystem.defaultBlendFunc();
-        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, opacity);
-
         context.drawTexture(
-                net.minecraft.client.render.RenderLayer::getGuiTextured,
+                RenderPipelines.GUI_TEXTURED,
                 entry.textureId, cx - size / 2, cy - size / 2,
-                0, 0, size, size, size, size
+                0f, 0f, size, size, size, size
         );
-
-        MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers().draw();
-        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
     }
 
     private static GifEntry getOrLoad(String assetPath) {
@@ -176,7 +162,7 @@ public final class GifCrosshair {
                     }
                 }
 
-                NativeImageBackedTexture tex = new NativeImageBackedTexture(nativeImage);
+                NativeImageBackedTexture tex = new NativeImageBackedTexture(() -> "customcross", nativeImage);
                 Identifier id = Identifier.of("customcross", "gif_" + Math.abs(assetPath.hashCode()) + "_" + i);
                 MinecraftClient.getInstance().getTextureManager().registerTexture(id, tex);
 
@@ -222,7 +208,7 @@ public final class GifCrosshair {
                 }
             }
 
-            NativeImageBackedTexture tex = new NativeImageBackedTexture(nativeImage);
+            NativeImageBackedTexture tex = new NativeImageBackedTexture(() -> "customcross", nativeImage);
             Identifier id = Identifier.of("customcross", "static_" + Math.abs(assetPath.hashCode()));
             MinecraftClient.getInstance().getTextureManager().registerTexture(id, tex);
 

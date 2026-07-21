@@ -195,8 +195,8 @@ public class SettingsScreen extends Screen {
 
         int cw = contentW - CONTENT_W_OFFSET;
         ctx.enableScissor(contentX, HEADER_H, contentW, contentH);
-        ctx.getMatrices().push();
-        ctx.getMatrices().translate(0, scrollOffset, 0);
+        ctx.getMatrices().pushMatrix();
+        ctx.getMatrices().translate(0, scrollOffset);
 
         int cy = HEADER_H + 6;
 
@@ -212,7 +212,7 @@ public class SettingsScreen extends Screen {
         CATEGORY_END_Y[activeCategory] = cy - HEADER_H + 10;
         maxScroll = Math.max(0, cy - HEADER_H - (height - HEADER_H - FOOTER_H) + 20);
 
-        ctx.getMatrices().pop();
+        ctx.getMatrices().popMatrix();
         ctx.disableScissor();
 
         drawFooter(ctx, mx, my, delta);

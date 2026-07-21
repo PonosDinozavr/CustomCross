@@ -9,6 +9,7 @@ import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.RaycastContext;
+import net.minecraft.entity.EquipmentSlot;
 import java.util.Optional;
 
 public final class TargetDetector {
@@ -51,10 +52,10 @@ public final class TargetDetector {
     }
 
     private static boolean hasNoArmor(LivingEntity entity) {
-        for (var stack : entity.getArmorItems()) {
-            if (!stack.isEmpty()) return false;
-        }
-        return true;
+        return entity.getEquippedStack(EquipmentSlot.HEAD).isEmpty()
+            && entity.getEquippedStack(EquipmentSlot.CHEST).isEmpty()
+            && entity.getEquippedStack(EquipmentSlot.LEGS).isEmpty()
+            && entity.getEquippedStack(EquipmentSlot.FEET).isEmpty();
     }
 
     public enum TargetType { NONE, PLAYER, MOB, BLOCK }
