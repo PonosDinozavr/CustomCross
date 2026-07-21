@@ -16,9 +16,10 @@ public class CrosshairConfig {
     private int leftColor = 0xFFFFFFFF;
     private int rightColor = 0xFFFFFFFF;
     private boolean targetColorEnabled = true;
-    private int targetColor = 0xFFFF4444;
+    private boolean blockTargetEnabled = true;
     private int playerTargetColor = 0xFFFF4444;
     private int mobTargetColor = 0xFFFF6600;
+    private int blockTargetColor = 0xFF44FF44;
     private boolean rainbowMode = false;
     private float rainbowSpeed = 1.0f;
     private boolean pulsing = false;
@@ -71,14 +72,17 @@ public class CrosshairConfig {
     public boolean isTargetColorEnabled() { return targetColorEnabled; }
     public void setTargetColorEnabled(boolean v) { this.targetColorEnabled = v; }
 
-    public int getTargetColor() { return targetColor; }
-    public void setTargetColor(int color) { this.targetColor = color; }
+    public boolean isBlockTargetEnabled() { return blockTargetEnabled; }
+    public void setBlockTargetEnabled(boolean v) { this.blockTargetEnabled = v; }
 
     public int getPlayerTargetColor() { return playerTargetColor; }
     public void setPlayerTargetColor(int color) { this.playerTargetColor = color; }
 
     public int getMobTargetColor() { return mobTargetColor; }
     public void setMobTargetColor(int color) { this.mobTargetColor = color; }
+
+    public int getBlockTargetColor() { return blockTargetColor; }
+    public void setBlockTargetColor(int color) { this.blockTargetColor = color; }
 
     public boolean isRainbowMode() { return rainbowMode; }
     public void setRainbowMode(boolean v) { this.rainbowMode = v; }
@@ -114,9 +118,10 @@ public class CrosshairConfig {
         leftColor = 0xFFFFFFFF;
         rightColor = 0xFFFFFFFF;
         targetColorEnabled = true;
-        targetColor = 0xFFFF4444;
+        blockTargetEnabled = true;
         playerTargetColor = 0xFFFF4444;
         mobTargetColor = 0xFFFF6600;
+        blockTargetColor = 0xFF44FF44;
         rainbowMode = false;
         rainbowSpeed = 1.0f;
         pulsing = false;

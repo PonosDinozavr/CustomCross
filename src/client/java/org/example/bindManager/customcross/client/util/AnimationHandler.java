@@ -10,8 +10,9 @@ public final class AnimationHandler {
     }
 
     public static float getPulseAlpha(float speed, float time, float baseAlpha) {
-        float pulse = (float) (Math.sin(time * speed * 0.1f * Math.PI * 2) * 0.5 + 0.5);
-        return baseAlpha * (0.5f + pulse * 0.5f);
+        float pulse = (float) (Math.sin(time * speed * 0.08f * Math.PI * 2) * 0.5 + 0.5);
+        float eased = pulse * pulse * (3 - 2 * pulse);
+        return baseAlpha * (0.15f + eased * 0.85f);
     }
 
     public static int getCurrentColor(CrosshairConfig config, int baseColor, int targetColor, float time, float tickDelta) {

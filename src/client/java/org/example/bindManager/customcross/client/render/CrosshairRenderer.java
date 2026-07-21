@@ -49,11 +49,13 @@ public final class CrosshairRenderer {
 
         int baseColor = config.getColor();
         int targetColor = baseColor;
+        TargetDetector.TargetType targetType = TargetDetector.getTargetType(CLIENT, tickDelta);
         if (config.isTargetColorEnabled()) {
-            TargetDetector.TargetType targetType = TargetDetector.getTargetType(CLIENT, tickDelta);
             if (targetType == TargetDetector.TargetType.PLAYER) targetColor = config.getPlayerTargetColor();
             else if (targetType == TargetDetector.TargetType.MOB) targetColor = config.getMobTargetColor();
-            else if (targetType == TargetDetector.TargetType.OTHER) targetColor = config.getTargetColor();
+        }
+        if (targetColor == baseColor && config.isBlockTargetEnabled()) {
+            if (targetType == TargetDetector.TargetType.BLOCK) targetColor = config.getBlockTargetColor();
         }
 
         currentColor = AnimationHandler.getCurrentColor(config, currentColor, targetColor, currentTime, tickDelta);

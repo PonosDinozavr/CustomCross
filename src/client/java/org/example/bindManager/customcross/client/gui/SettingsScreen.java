@@ -46,22 +46,22 @@ public class SettingsScreen extends Screen {
     private ModernWidgets.Slider activeSlider = null;
     private ColorPickerWidget activeColorPicker = null;
 
-    private static final int BG_MAIN = 0xFF5E5E5E;
-    private static final int BG_CONTENT = 0xFF686868;
-    private static final int BG_SIDEBAR = 0xFF5A5A5A;
-    private static final int BG_HEADER = 0xFF4D4D4D;
-    private static final int BG_CARD = 0xFF707070;
-    private static final int BG_CARD_HOVER = 0xFF7E7E7E;
-    private static final int ACCENT = 0xFF11FF00;
-    private static final int ACCENT_HOVER = 0xFF11FF00;
-    private static final int ACCENT_DARK = 0xFF00A845;
+    private static final int BG_MAIN = 0xFF999999;
+    private static final int BG_CONTENT = 0xFFAAAAAA;
+    private static final int BG_SIDEBAR = 0xFF8E8E8E;
+    private static final int BG_HEADER = 0xFF808080;
+    private static final int BG_CARD = 0xFFB0B0B0;
+    private static final int BG_CARD_HOVER = 0xFFC0C0C0;
+    private static final int ACCENT = 0xFF00FF0D;
+    private static final int ACCENT_HOVER = 0xFF00FF0D;
+    private static final int ACCENT_DARK = 0xFF00FF0D;
     private static final int DISCORD_BLUE = 0xFFDCDCDE;
     private static final int DISCORD_BLUE_HOVER = 0xFF3E48C9;
-    private static final int TEXT_PRIMARY = 0xFFE0E0E0;
+    private static final int TEXT_PRIMARY = 0xFFFFFFFF;
     private static final int TEXT_BRIGHT = 0xFFFFFFFF;
-    private static final int TEXT_SECONDARY = 0xFFCCCCCC;
-    private static final int BORDER = 0xFF8A8A8A;
-    private static final int BORDER_HOVER = 0xFFAAAAAA;
+    private static final int TEXT_SECONDARY = 0xFFEEEEEE;
+    private static final int BORDER = 0xFFCCCCCC;
+    private static final int BORDER_HOVER = 0xFFDDDDDD;
     private static final int DANGER = 0xFFD32F2F;
     private static final int DANGER_HOVER = 0xFFE57373;
 
@@ -110,7 +110,7 @@ public class SettingsScreen extends Screen {
 
     private void drawHeader(DrawContext ctx) {
         ctx.fill(0, 0, width, HEADER_H, BG_HEADER);
-        ctx.fill(0, HEADER_H - 1, width, HEADER_H, 0xFF333333);
+        ctx.fill(0, HEADER_H - 1, width, HEADER_H, 0xFF777777);
         ctx.drawText(textRenderer,
                 Text.translatable("customcross.gui.title").copy().setStyle(
                         net.minecraft.text.Style.EMPTY.withBold(true)),
@@ -173,7 +173,7 @@ public class SettingsScreen extends Screen {
         int contentW = width - SIDEBAR_W;
         int contentH = height - HEADER_H - FOOTER_H;
         ctx.fill(contentX, HEADER_H, contentX + contentW, HEADER_H + contentH, BG_CONTENT);
-        ctx.fill(SIDEBAR_W - 1, HEADER_H, SIDEBAR_W, height - FOOTER_H, 0xFF333333);
+            ctx.fill(SIDEBAR_W - 1, HEADER_H, SIDEBAR_W, height - FOOTER_H, 0xFF777777);
 
         int btnH = 30;
         for (int i = 0; i < CATEGORIES.length; i++) {
@@ -182,7 +182,7 @@ public class SettingsScreen extends Screen {
                     && my >= HEADER_H + 4 + i * (btnH + 2)
                     && my <= HEADER_H + 4 + i * (btnH + 2) + btnH;
             int y = HEADER_H + 4 + i * (btnH + 2);
-            int bg = active ? ACCENT : (hover ? 0xFF333333 : 0xFF151515);
+            int bg = active ? ACCENT : (hover ? 0xFF777777 : 0xFF5A5A5A);
             ctx.fill(6, y, SIDEBAR_W - 6, y + btnH, bg);
             if (active) {
                 ctx.fill(6, y, 8, y + btnH, ACCENT_DARK);
@@ -221,13 +221,13 @@ public class SettingsScreen extends Screen {
     private void drawFooter(DrawContext ctx, int mx, int my, float delta) {
         int fy = height - FOOTER_H;
         ctx.fill(0, fy, width, height, BG_HEADER);
-        ctx.fill(0, fy, width, fy + 1, 0xFF333333);
+        ctx.fill(0, fy, width, fy + 1, 0xFF777777);
 
         int btnW = 100, btnH = 24;
         int cx = SIDEBAR_W + (width - SIDEBAR_W) / 2;
 
         boolean resetHover = mx >= cx - btnW - 8 && mx <= cx - 8 && my >= fy + 6 && my <= fy + 6 + btnH;
-        ctx.fill(cx - btnW - 8, fy + 6, cx - 8, fy + 6 + btnH, resetHover ? 0xFF555555 : 0xFF444444);
+        ctx.fill(cx - btnW - 8, fy + 6, cx - 8, fy + 6 + btnH, resetHover ? 0xFF999999 : 0xFF808080);
         ctx.drawBorder(cx - btnW - 8, fy + 6, btnW, btnH, resetHover ? BORDER_HOVER : BORDER);
         ctx.drawText(textRenderer, btn("reset"), cx - btnW - 8 + (btnW - textRenderer.getWidth(btn("reset"))) / 2,
                 fy + 6 + (btnH - 8) / 2, TEXT_BRIGHT, true);
@@ -235,13 +235,13 @@ public class SettingsScreen extends Screen {
         boolean doneHover = mx >= cx + 8 && mx <= cx + 8 + btnW && my >= fy + 6 && my <= fy + 6 + btnH;
         int doneColor = doneHover ? ACCENT_HOVER : ACCENT;
         ctx.fill(cx + 8, fy + 6, cx + 8 + btnW, fy + 6 + btnH, doneColor);
-        ctx.drawBorder(cx + 8, fy + 6, btnW, btnH, doneHover ? 0xFF81C784 : ACCENT_DARK);
+        ctx.drawBorder(cx + 8, fy + 6, btnW, btnH, doneHover ? 0xFF00FF0D : ACCENT_DARK);
         ctx.drawText(textRenderer, btn("done"), cx + 8 + (btnW - textRenderer.getWidth(btn("done"))) / 2,
                 fy + 6 + (btnH - 8) / 2, TEXT_BRIGHT, true);
     }
 
     private void drawDivider(DrawContext ctx, int x, int y, int w) {
-        ctx.fill(x + 8, y, x + w - 8, y + 1, 0xFF333333);
+        ctx.fill(x + 8, y, x + w - 8, y + 1, 0xFF888888);
     }
 
     private void drawSection(DrawContext ctx, int x, int y, int w, String key) {
@@ -268,14 +268,17 @@ public class SettingsScreen extends Screen {
                 v -> { config.setDisableVanilla(v); save(); }, mx, my, delta); cy += 30;
 
         drawSection(ctx, CONTENT_X, cy, w, "shape"); cy += 28;
+        int shapeBtnH = 32;
+        int shapeGap = 6;
         for (CrosshairShape s : CrosshairShape.values()) {
             String key = switch (s) { case CLASSIC -> "classic"; case DOT -> "dot"; case CIRCLE -> "circle"; case SQUARE -> "square"; };
             boolean sel = config.getShape() == s;
             int bg = sel ? ACCENT : BG_CARD;
-            ctx.fill(CONTENT_X + 5, cy, CONTENT_X + w - 5, cy + 24, bg);
-            if (sel) ctx.fill(CONTENT_X + 5, cy, CONTENT_X + 9, cy + 24, ACCENT_DARK);
-            ctx.drawText(textRenderer, shape(key), CONTENT_X + 16, cy + 7, sel ? TEXT_BRIGHT : TEXT_PRIMARY, true);
-            cy += 26;
+            ctx.fill(CONTENT_X + 5, cy, CONTENT_X + w - 5, cy + shapeBtnH, bg);
+            ctx.drawBorder(CONTENT_X + 5, cy, w - 10, shapeBtnH, sel ? ACCENT_DARK : BORDER);
+            if (sel) ctx.fill(CONTENT_X + 5, cy, CONTENT_X + 9, cy + shapeBtnH, ACCENT_DARK);
+            ctx.drawText(textRenderer, shape(key), CONTENT_X + 16, cy + (shapeBtnH - 8) / 2, sel ? TEXT_BRIGHT : TEXT_PRIMARY, true);
+            cy += shapeBtnH + shapeGap;
         }
         return cy;
     }
@@ -321,7 +324,11 @@ public class SettingsScreen extends Screen {
                 v -> { config.setTargetColorEnabled(v); save(); }, mx, my, delta); cy += 30;
         cy = renderLineColor(ctx, cy, w, "mob_color", config.getMobTargetColor(), c -> { config.setMobTargetColor(c); save(); }, mx, my, delta);
         cy = renderLineColor(ctx, cy, w, "player_color", config.getPlayerTargetColor(), c -> { config.setPlayerTargetColor(c); save(); }, mx, my, delta);
-        cy = renderLineColor(ctx, cy, w, "other_color", config.getTargetColor(), c -> { config.setTargetColor(c); save(); }, mx, my, delta);
+        drawToggle(ctx, CONTENT_X, cy, w, "block_target", config.isBlockTargetEnabled(),
+                v -> { config.setBlockTargetEnabled(v); save(); }, mx, my, delta); cy += 30;
+        if (config.isBlockTargetEnabled()) {
+            cy = renderLineColor(ctx, cy, w, "block_color", config.getBlockTargetColor(), c -> { config.setBlockTargetColor(c); save(); }, mx, my, delta);
+        }
         return cy;
     }
 
@@ -347,55 +354,22 @@ public class SettingsScreen extends Screen {
 
         int idx = 0;
         for (var tmpl : templates) {
-            int col = idx % cols;
-            int row = idx / cols;
+            int col = idx % cols, row = idx / cols;
             int tx = startX + col * cellW;
             int ty = cy + row * (cellH + 6);
-
-            boolean hover = mx >= tx && mx <= tx + cellW - 4 && amy >= ty && amy <= ty + cellH;
-            ctx.fill(tx, ty, tx + cellW - 4, ty + cellH, hover ? BG_CARD_HOVER : BG_CARD);
-            ctx.drawBorder(tx, ty, cellW - 4, cellH, hover ? ACCENT : BORDER);
-
-            if (hover) {
-                ctx.fill(tx + 2, ty + 2, tx + cellW - 6, ty + cellH - 2, 0x18000000);
-            }
-
-            CrosshairShape previewShape = getShapeFor(tmpl);
-            int previewColor = getColorFor(tmpl);
-            String previewGif = getGifFor(tmpl);
-            int previewCx = tx + 24;
-            int previewCy = ty + cellH / 2;
-
-            if (!previewGif.isEmpty()) {
-                GifCrosshair.render(ctx, previewCx, previewCy, previewGif, 0.6f, 1.0f);
-            } else {
-                switch (previewShape) {
-                    case CLASSIC -> {
-                        ctx.fill(previewCx - 1, previewCy - 10, previewCx + 2, previewCy - 3, previewColor);
-                        ctx.fill(previewCx - 1, previewCy + 3, previewCx + 2, previewCy + 10, previewColor);
-                        ctx.fill(previewCx - 10, previewCy - 1, previewCx - 3, previewCy + 2, previewColor);
-                        ctx.fill(previewCx + 3, previewCy - 1, previewCx + 10, previewCy + 2, previewColor);
-                    }
-                    case DOT -> ctx.fill(previewCx - 4, previewCy - 4, previewCx + 5, previewCy + 5, previewColor);
-                    case CIRCLE -> ctx.drawBorder(previewCx - 8, previewCy - 8, 16, 16, previewColor);
-                    case SQUARE -> {
-                        ctx.fill(previewCx - 9, previewCy - 9, previewCx + 10, previewCy - 6, previewColor);
-                        ctx.fill(previewCx - 9, previewCy + 6, previewCx + 10, previewCy + 9, previewColor);
-                        ctx.fill(previewCx - 9, previewCy - 9, previewCx - 6, previewCy + 9, previewColor);
-                        ctx.fill(previewCx + 6, previewCy - 9, previewCx + 9, previewCy + 9, previewColor);
-                    }
-                }
-            }
-
-            ctx.drawText(textRenderer, Text.literal(tmpl.nameKey()),
-                    tx + 48, ty + (cellH - 8) / 2,
-                    hover ? TEXT_BRIGHT : TEXT_PRIMARY, true);
-
+            drawLibraryCard(ctx, tx, ty, cellW, cellH, mx, amy, tmpl);
             idx++;
         }
 
-        int totalRows = (templates.size() + cols - 1) / cols;
-        cy += totalRows * (cellH + 6) + 16;
+        // Add button always on next row after templates
+        int addRow = (templates.size() + cols - 1) / cols;
+        int addCol = templates.size() % cols;
+        int addTx = startX + addCol * cellW;
+        int addTy = cy + addRow * (cellH + 6);
+        drawLibraryAddCard(ctx, addTx, addTy, cellW, cellH, mx, amy);
+
+        int totalVisualRows = addRow + 1;
+        cy += totalVisualRows * (cellH + 6) + 16;
 
         ctx.fill(CONTENT_X + 8, cy, CONTENT_X + w - 8, cy + 1, 0xFF444444);
         cy += 14;
@@ -406,6 +380,49 @@ public class SettingsScreen extends Screen {
         cy += 40;
 
         return cy;
+    }
+
+    private void drawLibraryCard(DrawContext ctx, int tx, int ty, int w, int h, int mx, int my, CrosshairLibrary.Template tmpl) {
+        boolean hover = mx >= tx && mx <= tx + w - 4 && my >= ty && my <= ty + h;
+        ctx.fill(tx, ty, tx + w - 4, ty + h, hover ? BG_CARD_HOVER : BG_CARD);
+        ctx.drawBorder(tx, ty, w - 4, h, hover ? ACCENT : BORDER);
+        if (hover) ctx.fill(tx + 2, ty + 2, tx + w - 6, ty + h - 2, 0x18000000);
+
+        CrosshairShape previewShape = getShapeFor(tmpl);
+        int previewColor = getColorFor(tmpl);
+        String previewGif = getGifFor(tmpl);
+        int cx = tx + 24, py = ty + h / 2;
+
+        if (!previewGif.isEmpty()) {
+            GifCrosshair.render(ctx, cx, py, previewGif, 0.6f, 1.0f);
+        } else {
+            switch (previewShape) {
+                case CLASSIC -> {
+                    ctx.fill(cx - 1, py - 10, cx + 2, py - 3, previewColor);
+                    ctx.fill(cx - 1, py + 3, cx + 2, py + 10, previewColor);
+                    ctx.fill(cx - 10, py - 1, cx - 3, py + 2, previewColor);
+                    ctx.fill(cx + 3, py - 1, cx + 10, py + 2, previewColor);
+                }
+                case DOT -> ctx.fill(cx - 4, py - 4, cx + 5, py + 5, previewColor);
+                case CIRCLE -> ctx.drawBorder(cx - 8, py - 8, 16, 16, previewColor);
+                case SQUARE -> {
+                    ctx.fill(cx - 9, py - 9, cx + 10, py - 6, previewColor);
+                    ctx.fill(cx - 9, py + 6, cx + 10, py + 9, previewColor);
+                    ctx.fill(cx - 9, py - 9, cx - 6, py + 9, previewColor);
+                    ctx.fill(cx + 6, py - 9, cx + 9, py + 9, previewColor);
+                }
+            }
+        }
+        ctx.drawText(textRenderer, Text.literal(tmpl.nameKey()), tx + 48, ty + (h - 8) / 2, hover ? TEXT_BRIGHT : TEXT_PRIMARY, true);
+    }
+
+    private void drawLibraryAddCard(DrawContext ctx, int tx, int ty, int w, int h, int mx, int my) {
+        boolean hover = mx >= tx && mx <= tx + w - 4 && my >= ty && my <= ty + h;
+        ctx.fill(tx, ty, tx + w - 4, ty + h, hover ? BG_CARD_HOVER : BG_CARD);
+        ctx.drawBorder(tx, ty, w - 4, h, hover ? ACCENT : BORDER);
+        ctx.drawText(textRenderer, Text.literal("+"), tx + w / 2 - 8, ty + h / 2 - 8, ACCENT, true);
+        ctx.drawText(textRenderer, Text.translatable("customcross.gui.library.create"),
+                tx + 8, ty + h - 18, TEXT_SECONDARY, true);
     }
 
     private static CrosshairShape getShapeFor(CrosshairLibrary.Template t) {
@@ -477,13 +494,15 @@ public class SettingsScreen extends Screen {
         if (handleToggleClick(mx, my, cy, config.isCustomEnabled(), v -> { config.setCustomEnabled(v); save(); })) return true; cy += 24;
         if (handleToggleClick(mx, my, cy, config.isDisableVanilla(), v -> { config.setDisableVanilla(v); save(); })) return true; cy += 30;
         cy += 28;
+        int shapeBtnH = 32;
+        int shapeGap = 6;
         for (CrosshairShape s : CrosshairShape.values()) {
-            if (mx >= CONTENT_X + 5 && mx <= CONTENT_X + (width - SIDEBAR_W - CONTENT_W_OFFSET) - 5 && my >= cy && my <= cy + 24) {
+            if (mx >= CONTENT_X + 5 && mx <= CONTENT_X + (width - SIDEBAR_W - CONTENT_W_OFFSET) - 5 && my >= cy && my <= cy + shapeBtnH) {
                 ModernWidgets.playCustomClick();
                 config.setShape(s); config.setActiveGif(""); save();
                 return true;
             }
-            cy += 26;
+            cy += shapeBtnH + shapeGap;
         }
         return false;
     }
@@ -523,7 +542,10 @@ public class SettingsScreen extends Screen {
         if (handleToggleClick(mx, my, cy, config.isTargetColorEnabled(), v -> { config.setTargetColorEnabled(v); save(); })) return true; cy += 30;
         cy = handleLineColorClick(mx, my, cy, config.getMobTargetColor(), c -> { config.setMobTargetColor(c); save(); });
         cy = handleLineColorClick(mx, my, cy, config.getPlayerTargetColor(), c -> { config.setPlayerTargetColor(c); save(); });
-        cy = handleLineColorClick(mx, my, cy, config.getTargetColor(), c -> { config.setTargetColor(c); save(); });
+        if (handleToggleClick(mx, my, cy, config.isBlockTargetEnabled(), v -> { config.setBlockTargetEnabled(v); save(); })) return true; cy += 30;
+        if (config.isBlockTargetEnabled()) {
+            cy = handleLineColorClick(mx, my, cy, config.getBlockTargetColor(), c -> { config.setBlockTargetColor(c); save(); });
+        }
         return false;
     }
 
@@ -558,8 +580,19 @@ public class SettingsScreen extends Screen {
             }
         }
 
-        int totalRows = (templates.size() + cols - 1) / cols;
-        int discordY = cy + totalRows * (cellH + 6) + 30;
+        // Add button
+        int addRow = (templates.size() + cols - 1) / cols;
+        int addCol = templates.size() % cols;
+        int addTx = startX + addCol * cellW;
+        int addTy = cy + addRow * (cellH + 6);
+        if (mx >= addTx && mx <= addTx + cellW - 4 && my >= addTy && my <= addTy + cellH) {
+            ModernWidgets.playCustomClick();
+            MinecraftClient.getInstance().setScreen(new CrosshairEditorScreen(this, config));
+            return true;
+        }
+
+        int totalVisualRows = addRow + 1;
+        int discordY = cy + totalVisualRows * (cellH + 6) + 30;
         if (mx >= CONTENT_X + 8 && mx <= CONTENT_X + cw - 8 && my >= discordY && my <= discordY + 12) {
             net.minecraft.util.Util.getOperatingSystem().open("https://discord.gg/WThDK2My7e");
             return true;

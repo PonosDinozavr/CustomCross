@@ -20,12 +20,6 @@ public class CustomCrossClient implements ClientModInitializer {
         CrosshairRenderer.register();
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            if (KeyBindings.toggleKey.wasPressed()) {
-                var config = ConfigManager.getConfig();
-                config.setCustomEnabled(!config.isCustomEnabled());
-                ConfigManager.save();
-            }
-
             if (KeyBindings.settingsKey.wasPressed()) {
                 if (client.player != null) {
                     client.setScreen(new SettingsScreen(null));

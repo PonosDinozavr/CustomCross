@@ -41,11 +41,13 @@ public final class TargetDetector {
                 if (dist < closestDist) { closestDist = dist; closest = entity; }
             }
         }
-        if (closest == null) return TargetType.NONE;
+        if (closest == null) {
+            if (blockHit.getType() == HitResult.Type.BLOCK) return TargetType.BLOCK;
+            return TargetType.NONE;
+        }
         if (closest instanceof PlayerEntity) return TargetType.PLAYER;
-        if (closest instanceof LivingEntity) return TargetType.MOB;
-        return TargetType.OTHER;
+        return TargetType.MOB;
     }
 
-    public enum TargetType { NONE, PLAYER, MOB, OTHER }
+    public enum TargetType { NONE, PLAYER, MOB, BLOCK }
 }

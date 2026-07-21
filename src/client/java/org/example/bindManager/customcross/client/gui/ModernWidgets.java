@@ -49,16 +49,16 @@ public final class ModernWidgets {
 
             int trackW = 28, trackH = 14;
             int trackX = getX() + 2, trackY = getY() + 3;
-            int trackColor = AnimationUtil.lerpColor(0xFF555555, 0xFF4CAF50, knobAnim);
-            if (hoverAnim > 0.01f) trackColor = AnimationUtil.lerpColor(trackColor, 0xFF66BB6A, hoverAnim * 0.3f);
+            int trackColor = AnimationUtil.lerpColor(0xFF555555, 0xFF00FF0D, knobAnim);
+            if (hoverAnim > 0.01f) trackColor = AnimationUtil.lerpColor(trackColor, 0xFF00FF0D, hoverAnim * 0.3f);
             context.fill(trackX, trackY, trackX + trackW, trackY + trackH, trackColor);
-            context.drawBorder(trackX, trackY, trackW, trackH, 0xFF333333);
+            context.drawBorder(trackX, trackY, trackW, trackH, 0xFF888888);
 
             int knobSize = 10;
             float knobPos = trackX + 2 + (trackW - knobSize - 4) * knobAnim;
             context.fill((int) knobPos, trackY + 2, (int) (knobPos + knobSize), trackY + trackH - 2, 0xFFFFFFFF);
 
-            int labelColor = AnimationUtil.lerpColor(0xFFAAAAAA, 0xFFFFFFFF, toggled ? 1f : hoverAnim);
+            int labelColor = AnimationUtil.lerpColor(0xFFCCCCCC, 0xFFFFFFFF, toggled ? 1f : hoverAnim);
             context.drawText(MinecraftClient.getInstance().textRenderer, getMessage(), getX() + 34, getY() + 5, labelColor, true);
         }
 
@@ -112,8 +112,8 @@ public final class ModernWidgets {
             float norm = (value - min) / (max - min);
             int fillW = (int) (sliderWidth * norm);
 
-            context.fill(sliderX, sliderY, sliderX + sliderWidth, sliderY + 4, 0xFF444444);
-            int fillColor = AnimationUtil.lerpColor(0xFF4CAF50, 0xFF81C784, hoverAnim);
+            context.fill(sliderX, sliderY, sliderX + sliderWidth, sliderY + 4, 0xFF888888);
+            int fillColor = AnimationUtil.lerpColor(0xFF00FF0D, 0xFF00FF0D, hoverAnim);
             context.fill(sliderX, sliderY, sliderX + fillW, sliderY + 4, fillColor);
 
             int handleSize = 5, hs = (int) (hoverAnim * 2);
@@ -157,7 +157,8 @@ public final class ModernWidgets {
 
         private void applyDelta(double mx) {
             updateLayout();
-            float norm = clamp((float) ((mx - sliderX) / sliderWidth), 0, 1);
+            double clampedX = Math.max(sliderX, Math.min(mx, sliderX + sliderWidth));
+            float norm = (float) ((clampedX - sliderX) / sliderWidth);
             value = min + norm * (max - min);
             onChange.accept(value);
         }
@@ -212,8 +213,8 @@ public final class ModernWidgets {
         public CategoryHeader(int x, int y, int width, int height, Text text) { super(x, y, width, height, text); }
         @Override
         protected void renderWidget(DrawContext context, int mx, int my, float delta) {
-            context.fill(getX(), getY(), getX() + getWidth(), getY() + getHeight(), 0xFF2A2A2A);
-            context.drawText(MinecraftClient.getInstance().textRenderer, getMessage(), getX() + 8, getY() + 6, 0xFF4CAF50, true);
+            context.fill(getX(), getY(), getX() + getWidth(), getY() + getHeight(), 0xFF4A4A4A);
+            context.drawText(MinecraftClient.getInstance().textRenderer, getMessage(), getX() + 8, getY() + 6, 0xFF00FF0D, true);
         }
         @Override public boolean mouseClicked(double mx, double my, int button) { return false; }
         @Override protected void appendClickableNarrations(NarrationMessageBuilder builder) {}

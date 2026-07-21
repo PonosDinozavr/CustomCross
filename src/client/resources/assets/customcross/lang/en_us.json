@@ -1,5 +1,4 @@
 {
-  "key.customcross.toggle": "Toggle Custom Crosshair",
   "key.customcross.settings": "Open Crosshair Settings",
   "category.customcross": "CustomCross",
 
@@ -23,7 +22,8 @@
   "customcross.gui.setting.custom_enable": "Enable Custom Crosshair",
   "customcross.gui.setting.disable_vanilla": "Disable Vanilla Crosshair",
   "customcross.gui.setting.separate_lines": "Separate Line Colors",
-  "customcross.gui.setting.target_enable": "Change Color on Target",
+  "customcross.gui.setting.target_enable": "Change Color on Mobs and Players",
+  "customcross.gui.setting.block_target": "Change Color on Block",
   "customcross.gui.setting.rainbow": "Rainbow Mode",
   "customcross.gui.setting.pulsing": "Pulsing",
   "customcross.gui.setting.smooth_transition": "Smooth Color Transition",
@@ -42,7 +42,7 @@
 
   "customcross.gui.target.mob_color": "Mob Target Color",
   "customcross.gui.target.player_color": "Player Target Color",
-  "customcross.gui.target.other_color": "Other Entity Color",
+  "customcross.gui.target.block_color": "Block Target Color",
   "customcross.gui.target.line_top": "Top Line",
   "customcross.gui.target.line_bottom": "Bottom Line",
   "customcross.gui.target.line_left": "Left Line",
@@ -52,6 +52,13 @@
   "customcross.gui.button.done": "Done",
 
   "customcross.gui.library.discord": "\u00bb Suggest your crosshairs in our Discord!",
+  "customcross.gui.library.create": "Create new",
+
+  "customcross.editor.title": "Crosshair Editor",
+  "customcross.editor.shape": "Shape",
+  "customcross.editor.color": "Color",
+
+  "customcross.gui.button.cancel": "Cancel",
 
   "customcross.color.picker": "Color Picker",
   "customcross.color.preview": "Preview"
