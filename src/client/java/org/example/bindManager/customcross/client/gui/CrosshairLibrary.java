@@ -43,7 +43,8 @@ public final class CrosshairLibrary {
             template("x13", "Cross 9"),
             template("x14", "Cross 10"),
             template("x15", "Cross 11"),
-            template("x16", "Cross 12")
+            template("x16", "Cross 12"),
+            template("love", "Love")
     );
 
     private static Template template(String id, String name) {

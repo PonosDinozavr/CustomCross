@@ -1,9 +1,14 @@
 package org.example.bindManager.customcross.client.render;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.RenderTickCounter;
+import net.minecraft.client.texture.NativeImage;
+import net.minecraft.client.texture.NativeImageBackedTexture;
+import net.minecraft.util.Identifier;
 import org.example.bindManager.customcross.client.config.ConfigManager;
 import org.example.bindManager.customcross.client.config.CrosshairConfig;
 import org.example.bindManager.customcross.client.config.CrosshairShape;
@@ -17,6 +22,9 @@ public final class CrosshairRenderer {
     private static float currentTime = 0;
     private static int currentColor = 0xFFFFFFFF;
     private static float currentAlpha = 1.0f;
+    private static NativeImageBackedTexture customTexture;
+    private static Identifier customTextureId;
+    private static int lastCustomPixelsHash = 0;
 
     public static void register() {
         HudRenderCallback.EVENT.register((context, tickCounter) -> render(context, tickCounter));
@@ -26,6 +34,7 @@ public final class CrosshairRenderer {
         CrosshairConfig config = ConfigManager.getConfig();
 
         if (!CLIENT.options.getPerspective().isFirstPerson()) return;
+        if (CLIENT.player != null && CLIENT.player.isSpectator()) return;
 
         if (config.isCustomEnabled()) {
             renderCustom(context, tickCounter, config);
@@ -40,6 +49,11 @@ public final class CrosshairRenderer {
         String gif = config.getActiveGif();
         if (!gif.isEmpty()) {
             GifCrosshair.render(context, x, y, gif, config.getSize(), config.getOpacity());
+            return;
+        }
+
+        if (config.isCustomDrawn()) {
+            renderCustomDrawn(context, config, x, y);
             return;
         }
 
@@ -124,5 +138,53 @@ public final class CrosshairRenderer {
             drawLine(context, cx - s, cy - s, cx - s + Math.max((int) t, 1), cy + s, color);
             drawLine(context, cx + s - Math.max((int) t, 1), cy - s, cx + s, cy + s, color);
         }
+    }
+
+    private static void renderCustomDrawn(DrawContext context, CrosshairConfig config, int cx, int cy) {
+        int[] pixels = config.getCustomPixelData();
+        if (pixels == null || pixels.length == 0) return;
+
+        int size = (int) Math.sqrt(pixels.length);
+        if (size * size != pixels.length) return;
+
+        int hash = java.util.Arrays.hashCode(pixels);
+        if (hash != lastCustomPixelsHash) {
+            if (customTexture != null) {
+                CLIENT.getTextureManager().destroyTexture(customTextureId);
+            }
+            NativeImage img = new NativeImage(size, size, true);
+            for (int y = 0; y < size; y++) {
+                for (int x = 0; x < size; x++) {
+                    int argb = pixels[y * size + x];
+                    int a = (argb >> 24) & 0xFF;
+                    int b = argb & 0xFF;
+                    int g = (argb >> 8) & 0xFF;
+                    int r = (argb >> 16) & 0xFF;
+                    img.setColorArgb(x, y, (a << 24) | (b << 16) | (g << 8) | r);
+                }
+            }
+            customTexture = new NativeImageBackedTexture(img);
+            customTextureId = Identifier.of("customcross", "custom_drawn_" + hash);
+            CLIENT.getTextureManager().registerTexture(customTextureId, customTexture);
+            lastCustomPixelsHash = hash;
+        }
+
+        float scale = config.getSize() * 1.5f;
+        int drawSize = Math.max((int) (size * scale), 4);
+        float opacity = config.getOpacity();
+
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
+        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, opacity);
+
+        context.drawTexture(
+                RenderLayer::getGuiTextured,
+                customTextureId,
+                cx - drawSize / 2, cy - drawSize / 2,
+                0, 0, drawSize, drawSize, size, size
+        );
+
+        CLIENT.getBufferBuilders().getEntityVertexConsumers().draw();
+        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
     }
 }
