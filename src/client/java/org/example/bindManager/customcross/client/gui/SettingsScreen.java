@@ -346,7 +346,7 @@ public class SettingsScreen extends Screen {
         drawSection(ctx, CONTENT_X, cy, w, "library"); cy += 28;
 
         int amy = my - scrollOffset;
-        var templates = CrosshairLibrary.TEMPLATES;
+        var templates = CrosshairLibrary.getTemplates();
         int cols = Math.min(2, Math.max(1, (w - 10) / 220));
         int cellW = (w - 10) / cols;
         int cellH = 64;
@@ -361,15 +361,14 @@ public class SettingsScreen extends Screen {
             idx++;
         }
 
-        // Add button always on next row after templates
-        int addRow = (templates.size() + cols - 1) / cols;
-        int addCol = templates.size() % cols;
-        int addTx = startX + addCol * cellW;
-        int addTy = cy + addRow * (cellH + 6);
-        drawLibraryAddCard(ctx, addTx, addTy, cellW, cellH, mx, amy);
+        int totalRows = (templates.size() + cols - 1) / cols;
+        cy += totalRows * (cellH + 6) + 16;
 
-        int totalVisualRows = addRow + 1;
-        cy += totalVisualRows * (cellH + 6) + 16;
+        // Hint about custom crosshair folder
+        int hx = CONTENT_X + 8;
+        ctx.drawText(textRenderer, Text.translatable("customcross.gui.library.folder_hint"),
+                hx, cy, TEXT_SECONDARY, true);
+        cy += 14;
 
         ctx.fill(CONTENT_X + 8, cy, CONTENT_X + w - 8, cy + 1, 0xFF444444);
         cy += 14;
@@ -414,15 +413,6 @@ public class SettingsScreen extends Screen {
             }
         }
         ctx.drawText(textRenderer, Text.literal(tmpl.nameKey()), tx + 48, ty + (h - 8) / 2, hover ? TEXT_BRIGHT : TEXT_PRIMARY, true);
-    }
-
-    private void drawLibraryAddCard(DrawContext ctx, int tx, int ty, int w, int h, int mx, int my) {
-        boolean hover = mx >= tx && mx <= tx + w - 4 && my >= ty && my <= ty + h;
-        ctx.fill(tx, ty, tx + w - 4, ty + h, hover ? BG_CARD_HOVER : BG_CARD);
-        ctx.drawBorder(tx, ty, w - 4, h, hover ? ACCENT : BORDER);
-        ctx.drawText(textRenderer, Text.literal("+"), tx + w / 2 - 8, ty + h / 2 - 8, ACCENT, true);
-        ctx.drawText(textRenderer, Text.translatable("customcross.gui.library.create"),
-                tx + 8, ty + h - 18, TEXT_SECONDARY, true);
     }
 
     private static CrosshairShape getShapeFor(CrosshairLibrary.Template t) {
@@ -561,7 +551,7 @@ public class SettingsScreen extends Screen {
 
     private boolean handleLibraryClicks(double mx, double my, int cw) {
         int cy = HEADER_H + 6 + 28;
-        var templates = CrosshairLibrary.TEMPLATES;
+        var templates = CrosshairLibrary.getTemplates();
         int cols = Math.min(2, Math.max(1, (cw - 10) / 220));
         int cellW = (cw - 10) / cols;
         int cellH = 64;
@@ -580,19 +570,8 @@ public class SettingsScreen extends Screen {
             }
         }
 
-        // Add button
-        int addRow = (templates.size() + cols - 1) / cols;
-        int addCol = templates.size() % cols;
-        int addTx = startX + addCol * cellW;
-        int addTy = cy + addRow * (cellH + 6);
-        if (mx >= addTx && mx <= addTx + cellW - 4 && my >= addTy && my <= addTy + cellH) {
-            ModernWidgets.playCustomClick();
-            MinecraftClient.getInstance().setScreen(new CrosshairEditorScreen(this, config));
-            return true;
-        }
-
-        int totalVisualRows = addRow + 1;
-        int discordY = cy + totalVisualRows * (cellH + 6) + 30;
+        int totalRows = (templates.size() + cols - 1) / cols;
+        int discordY = cy + totalRows * (cellH + 6) + 30;
         if (mx >= CONTENT_X + 8 && mx <= CONTENT_X + cw - 8 && my >= discordY && my <= discordY + 12) {
             net.minecraft.util.Util.getOperatingSystem().open("https://discord.gg/WThDK2My7e");
             return true;

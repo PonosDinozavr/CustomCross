@@ -1,6 +1,7 @@
 package org.example.bindManager.customcross.client.render;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.texture.NativeImage;
@@ -14,8 +15,11 @@ import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataNode;
 import javax.imageio.stream.ImageInputStream;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -102,12 +106,29 @@ public final class GifCrosshair {
         return loadPng(assetPath);
     }
 
-    private static GifEntry loadGif(String assetPath) {
+    private static byte[] readAllBytes(String assetPath) throws IOException {
+        if (assetPath.startsWith("scanned/")) {
+            String relative = assetPath.substring("scanned/".length());
+            Path file = FabricLoader.getInstance().getConfigDir().resolve("customcross/crosshairs").resolve(relative);
+            if (Files.exists(file)) {
+                return Files.readAllBytes(file);
+            }
+            CustomCross.LOGGER.warn("Scanned crosshair file not found: {}", file);
+            return null;
+        }
         try (InputStream is = MinecraftClient.getInstance().getResourceManager()
                 .open(Identifier.of("customcross", assetPath))) {
+            return is.readAllBytes();
+        }
+    }
+
+    private static GifEntry loadGif(String assetPath) {
+        try {
+            byte[] bytes = readAllBytes(assetPath);
+            if (bytes == null) return null;
 
             ImageReader reader = ImageIO.getImageReadersByFormatName("gif").next();
-            ImageInputStream iis = ImageIO.createImageInputStream(is);
+            ImageInputStream iis = ImageIO.createImageInputStream(new ByteArrayInputStream(bytes));
             reader.setInput(iis, false);
 
             int numFrames = reader.getNumImages(true);
@@ -133,7 +154,7 @@ public final class GifCrosshair {
                 }
 
                 NativeImageBackedTexture tex = new NativeImageBackedTexture(nativeImage);
-                Identifier id = Identifier.of("customcross", "gif_" + assetPath.hashCode() + "_" + i);
+                Identifier id = Identifier.of("customcross", "gif_" + Math.abs(assetPath.hashCode()) + "_" + i);
                 MinecraftClient.getInstance().getTextureManager().registerTexture(id, tex);
 
                 texList.add(id);
@@ -155,17 +176,18 @@ public final class GifCrosshair {
             CustomCross.LOGGER.info("Loaded animated GIF: {} ({} frames, {}ms)", assetPath, numFrames, totalDuration);
             return entry;
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             CustomCross.LOGGER.error("Failed to load GIF: {}", assetPath, e);
             return null;
         }
     }
 
     private static PngEntry loadPng(String assetPath) {
-        try (InputStream is = MinecraftClient.getInstance().getResourceManager()
-                .open(Identifier.of("customcross", assetPath))) {
+        try {
+            byte[] bytes = readAllBytes(assetPath);
+            if (bytes == null) return null;
 
-            BufferedImage image = ImageIO.read(is);
+            BufferedImage image = ImageIO.read(new ByteArrayInputStream(bytes));
             if (image == null) return null;
 
             int w = image.getWidth();
@@ -178,7 +200,7 @@ public final class GifCrosshair {
             }
 
             NativeImageBackedTexture tex = new NativeImageBackedTexture(nativeImage);
-            Identifier id = Identifier.of("customcross", "static_" + assetPath.hashCode());
+            Identifier id = Identifier.of("customcross", "static_" + Math.abs(assetPath.hashCode()));
             MinecraftClient.getInstance().getTextureManager().registerTexture(id, tex);
 
             PngEntry entry = new PngEntry(assetPath, id);
@@ -186,7 +208,7 @@ public final class GifCrosshair {
             CustomCross.LOGGER.info("Loaded static crosshair: {}", assetPath);
             return entry;
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             CustomCross.LOGGER.error("Failed to load crosshair texture: {}", assetPath, e);
             return null;
         }

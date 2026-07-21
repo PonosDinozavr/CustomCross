@@ -26,8 +26,6 @@ public class CrosshairConfig {
     private float pulseSpeed = 1.0f;
     private boolean smoothColorTransition = true;
     private String activeGif = "";
-    private boolean customDrawn = false;
-    private int[] customPixelData = new int[0];
 
     public boolean isCustomEnabled() { return customEnabled; }
     public void setCustomEnabled(boolean v) { this.customEnabled = v; }
@@ -104,12 +102,6 @@ public class CrosshairConfig {
     public String getActiveGif() { return activeGif; }
     public void setActiveGif(String path) { this.activeGif = path != null ? path : ""; }
 
-    public boolean isCustomDrawn() { return customDrawn; }
-    public void setCustomDrawn(boolean v) { this.customDrawn = v; }
-
-    public int[] getCustomPixelData() { return customPixelData; }
-    public void setCustomPixelData(int[] data) { this.customPixelData = data != null ? data : new int[0]; }
-
     public void reset() {
         customEnabled = true;
         disableVanilla = true;
@@ -136,7 +128,5 @@ public class CrosshairConfig {
         pulseSpeed = 1.0f;
         smoothColorTransition = true;
         activeGif = "";
-        customDrawn = false;
-        customPixelData = new int[0];
     }
 }

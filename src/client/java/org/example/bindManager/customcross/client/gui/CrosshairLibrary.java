@@ -3,6 +3,7 @@ package org.example.bindManager.customcross.client.gui;
 import org.example.bindManager.customcross.client.config.CrosshairConfig;
 import org.example.bindManager.customcross.client.config.CrosshairShape;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -54,5 +55,11 @@ public final class CrosshairLibrary {
             c.setPulsing(false); c.setRainbowMode(false);
             c.setActiveGif("textures/crosshairs/" + id + ".png");
         });
+    }
+
+    public static List<Template> getTemplates() {
+        List<Template> all = new ArrayList<>(TEMPLATES);
+        all.addAll(CrosshairScanner.scan());
+        return all;
     }
 }

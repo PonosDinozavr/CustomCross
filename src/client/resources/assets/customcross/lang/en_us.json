@@ -52,11 +52,7 @@
   "customcross.gui.button.done": "Done",
 
   "customcross.gui.library.discord": "\u00bb Suggest your crosshairs in our Discord!",
-  "customcross.gui.library.create": "Create new",
-
-  "customcross.editor.title": "Crosshair Editor",
-  "customcross.editor.shape": "Shape",
-  "customcross.editor.color": "Color",
+  "customcross.gui.library.folder_hint": "Drop your PNG / JPG / GIF files into the crosshairs folder in your config directory",
 
   "customcross.gui.button.cancel": "Cancel",
 
