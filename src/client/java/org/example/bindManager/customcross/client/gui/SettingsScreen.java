@@ -46,12 +46,12 @@ public class SettingsScreen extends Screen {
     private ModernWidgets.Slider activeSlider = null;
     private ColorPickerWidget activeColorPicker = null;
 
-    private static final int BG_MAIN = 0xFF4E4E4E;
-    private static final int BG_CONTENT = 0xFF585858;
-    private static final int BG_SIDEBAR = 0xFF4A4A4A;
-    private static final int BG_HEADER = 0xFF3D3D3D;
-    private static final int BG_CARD = 0xFF606060;
-    private static final int BG_CARD_HOVER = 0xFF6E6E6E;
+    private static final int BG_MAIN = 0xFF5E5E5E;
+    private static final int BG_CONTENT = 0xFF686868;
+    private static final int BG_SIDEBAR = 0xFF5A5A5A;
+    private static final int BG_HEADER = 0xFF4D4D4D;
+    private static final int BG_CARD = 0xFF707070;
+    private static final int BG_CARD_HOVER = 0xFF7E7E7E;
     private static final int ACCENT = 0xFF00C853;
     private static final int ACCENT_HOVER = 0xFF00E676;
     private static final int ACCENT_DARK = 0xFF00A845;
@@ -59,9 +59,9 @@ public class SettingsScreen extends Screen {
     private static final int DISCORD_BLUE_HOVER = 0xFF64B5F6;
     private static final int TEXT_PRIMARY = 0xFFE0E0E0;
     private static final int TEXT_BRIGHT = 0xFFFFFFFF;
-    private static final int TEXT_SECONDARY = 0xFFBBBBBB;
-    private static final int BORDER = 0xFF777777;
-    private static final int BORDER_HOVER = 0xFF999999;
+    private static final int TEXT_SECONDARY = 0xFFCCCCCC;
+    private static final int BORDER = 0xFF8A8A8A;
+    private static final int BORDER_HOVER = 0xFFAAAAAA;
     private static final int DANGER = 0xFFD32F2F;
     private static final int DANGER_HOVER = 0xFFE57373;
 
@@ -367,7 +367,7 @@ public class SettingsScreen extends Screen {
             int previewCy = ty + cellH / 2;
 
             if (!previewGif.isEmpty()) {
-                ctx.drawText(textRenderer, Text.literal("GIF"), tx + 10, previewCy - 4, ACCENT, true);
+                GifCrosshair.render(ctx, previewCx, previewCy, previewGif, 0.6f, 1.0f);
             } else {
                 switch (previewShape) {
                     case CLASSIC -> {
@@ -402,7 +402,7 @@ public class SettingsScreen extends Screen {
 
         boolean discordHover = mx >= CONTENT_X + 8 && mx <= CONTENT_X + w - 8 && amy >= cy && amy <= cy + 12;
         ctx.drawText(textRenderer, Text.translatable("customcross.gui.library.discord"),
-                CONTENT_X + 8, cy, discordHover ? DISCORD_BLUE_HOVER : TEXT_SECONDARY, true);
+                CONTENT_X + 8, cy, discordHover ? DISCORD_BLUE_HOVER : DISCORD_BLUE, true);
         cy += 40;
 
         return cy;
