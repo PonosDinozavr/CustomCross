@@ -44,21 +44,24 @@ public class SettingsScreen extends Screen {
     private int prevCategory = -1;
 
     private ModernWidgets.Slider activeSlider = null;
+    private ColorPickerWidget activeColorPicker = null;
 
-    private static final int BG_MAIN = 0xFF2D2D2D;
-    private static final int BG_CONTENT = 0xFF363636;
-    private static final int BG_SIDEBAR = 0xFF2A2A2A;
-    private static final int BG_HEADER = 0xFF222222;
-    private static final int BG_CARD = 0xFF3D3D3D;
-    private static final int BG_CARD_HOVER = 0xFF4A4A4A;
-    private static final int ACCENT = 0xFF4CAF50;
-    private static final int ACCENT_HOVER = 0xFF66BB6A;
-    private static final int ACCENT_DARK = 0xFF388E3C;
+    private static final int BG_MAIN = 0xFF4E4E4E;
+    private static final int BG_CONTENT = 0xFF585858;
+    private static final int BG_SIDEBAR = 0xFF4A4A4A;
+    private static final int BG_HEADER = 0xFF3D3D3D;
+    private static final int BG_CARD = 0xFF606060;
+    private static final int BG_CARD_HOVER = 0xFF6E6E6E;
+    private static final int ACCENT = 0xFF00C853;
+    private static final int ACCENT_HOVER = 0xFF00E676;
+    private static final int ACCENT_DARK = 0xFF00A845;
+    private static final int DISCORD_BLUE = 0xFF42A5F5;
+    private static final int DISCORD_BLUE_HOVER = 0xFF64B5F6;
     private static final int TEXT_PRIMARY = 0xFFE0E0E0;
     private static final int TEXT_BRIGHT = 0xFFFFFFFF;
-    private static final int TEXT_SECONDARY = 0xFFAAAAAA;
-    private static final int BORDER = 0xFF666666;
-    private static final int BORDER_HOVER = 0xFF888888;
+    private static final int TEXT_SECONDARY = 0xFFBBBBBB;
+    private static final int BORDER = 0xFF777777;
+    private static final int BORDER_HOVER = 0xFF999999;
     private static final int DANGER = 0xFFD32F2F;
     private static final int DANGER_HOVER = 0xFFE57373;
 
@@ -76,6 +79,7 @@ public class SettingsScreen extends Screen {
         prevCategory = -1;
         contentAlpha = 1f;
         activeSlider = null;
+        activeColorPicker = null;
     }
 
     private static Text cat(String k) { return Text.translatable("customcross.gui.category." + k); }
@@ -334,10 +338,11 @@ public class SettingsScreen extends Screen {
     private int renderLibrary(DrawContext ctx, int cy, int w, int mx, int my, float delta) {
         drawSection(ctx, CONTENT_X, cy, w, "library"); cy += 28;
 
+        int amy = my - scrollOffset;
         var templates = CrosshairLibrary.TEMPLATES;
-        int cols = Math.max(2, (w - 10) / 130);
+        int cols = Math.min(2, Math.max(1, (w - 10) / 220));
         int cellW = (w - 10) / cols;
-        int cellH = 56;
+        int cellH = 64;
         int startX = CONTENT_X + 5;
 
         int idx = 0;
@@ -347,28 +352,18 @@ public class SettingsScreen extends Screen {
             int tx = startX + col * cellW;
             int ty = cy + row * (cellH + 6);
 
-            boolean hover = mx >= tx && mx <= tx + cellW - 4 && my >= ty && my <= ty + cellH;
+            boolean hover = mx >= tx && mx <= tx + cellW - 4 && amy >= ty && amy <= ty + cellH;
             ctx.fill(tx, ty, tx + cellW - 4, ty + cellH, hover ? BG_CARD_HOVER : BG_CARD);
             ctx.drawBorder(tx, ty, cellW - 4, cellH, hover ? ACCENT : BORDER);
 
             if (hover) {
-                ctx.fill(tx + 2, ty + 2, tx + cellW - 6, ty + cellH - 2, 0x22000000);
-            }
-
-            boolean active = config.getActiveGif().contains(tmpl.id())
-                    || (!config.getActiveGif().isEmpty() && tmpl.id().equals("cat") && config.getActiveGif().contains("cat"))
-                    || (config.getActiveGif().isEmpty()
-                    && config.getShape().name().toLowerCase().equals(tmpl.id().replace("_", ""))
-                    && Math.abs(config.getSize() - getSizeFor(tmpl)) < 0.01f);
-
-            if (active) {
-                ctx.fill(tx + cellW - 4 - 16, ty + 4, tx + cellW - 8, ty + 10, ACCENT);
+                ctx.fill(tx + 2, ty + 2, tx + cellW - 6, ty + cellH - 2, 0x18000000);
             }
 
             CrosshairShape previewShape = getShapeFor(tmpl);
             int previewColor = getColorFor(tmpl);
             String previewGif = getGifFor(tmpl);
-            int previewCx = tx + 28;
+            int previewCx = tx + 24;
             int previewCy = ty + cellH / 2;
 
             if (!previewGif.isEmpty()) {
@@ -376,39 +371,39 @@ public class SettingsScreen extends Screen {
             } else {
                 switch (previewShape) {
                     case CLASSIC -> {
-                        ctx.fill(previewCx - 1, previewCy - 8, previewCx + 2, previewCy - 2, previewColor);
-                        ctx.fill(previewCx - 1, previewCy + 2, previewCx + 2, previewCy + 8, previewColor);
-                        ctx.fill(previewCx - 8, previewCy - 1, previewCx - 2, previewCy + 2, previewColor);
-                        ctx.fill(previewCx + 2, previewCy - 1, previewCx + 8, previewCy + 2, previewColor);
+                        ctx.fill(previewCx - 1, previewCy - 10, previewCx + 2, previewCy - 3, previewColor);
+                        ctx.fill(previewCx - 1, previewCy + 3, previewCx + 2, previewCy + 10, previewColor);
+                        ctx.fill(previewCx - 10, previewCy - 1, previewCx - 3, previewCy + 2, previewColor);
+                        ctx.fill(previewCx + 3, previewCy - 1, previewCx + 10, previewCy + 2, previewColor);
                     }
-                    case DOT -> ctx.fill(previewCx - 3, previewCy - 3, previewCx + 4, previewCy + 4, previewColor);
-                    case CIRCLE -> ctx.drawBorder(previewCx - 6, previewCy - 6, 12, 12, previewColor);
+                    case DOT -> ctx.fill(previewCx - 4, previewCy - 4, previewCx + 5, previewCy + 5, previewColor);
+                    case CIRCLE -> ctx.drawBorder(previewCx - 8, previewCy - 8, 16, 16, previewColor);
                     case SQUARE -> {
-                        ctx.fill(previewCx - 7, previewCy - 7, previewCx + 8, previewCy - 5, previewColor);
-                        ctx.fill(previewCx - 7, previewCy + 5, previewCx + 8, previewCy + 7, previewColor);
-                        ctx.fill(previewCx - 7, previewCy - 7, previewCx - 5, previewCy + 7, previewColor);
-                        ctx.fill(previewCx + 5, previewCy - 7, previewCx + 7, previewCy + 7, previewColor);
+                        ctx.fill(previewCx - 9, previewCy - 9, previewCx + 10, previewCy - 6, previewColor);
+                        ctx.fill(previewCx - 9, previewCy + 6, previewCx + 10, previewCy + 9, previewColor);
+                        ctx.fill(previewCx - 9, previewCy - 9, previewCx - 6, previewCy + 9, previewColor);
+                        ctx.fill(previewCx + 6, previewCy - 9, previewCx + 9, previewCy + 9, previewColor);
                     }
                 }
             }
 
             ctx.drawText(textRenderer, Text.literal(tmpl.nameKey()),
-                    tx + 52, ty + (cellH - 8) / 2,
+                    tx + 48, ty + (cellH - 8) / 2,
                     hover ? TEXT_BRIGHT : TEXT_PRIMARY, true);
 
             idx++;
         }
 
         int totalRows = (templates.size() + cols - 1) / cols;
-        cy += totalRows * (cellH + 6) + 10;
+        cy += totalRows * (cellH + 6) + 16;
 
-        ctx.fill(CONTENT_X + 5, cy, CONTENT_X + w - 5, cy + 1, 0xFF333333);
-        cy += 8;
+        ctx.fill(CONTENT_X + 8, cy, CONTENT_X + w - 8, cy + 1, 0xFF444444);
+        cy += 14;
 
-        boolean discordHover = mx >= CONTENT_X + 5 && mx <= CONTENT_X + w - 5 && my >= cy && my <= cy + 12;
+        boolean discordHover = mx >= CONTENT_X + 8 && mx <= CONTENT_X + w - 8 && amy >= cy && amy <= cy + 12;
         ctx.drawText(textRenderer, Text.translatable("customcross.gui.library.discord"),
-                CONTENT_X + 8, cy, discordHover ? ACCENT_HOVER : TEXT_SECONDARY, true);
-        cy += 16;
+                CONTENT_X + 8, cy, discordHover ? DISCORD_BLUE_HOVER : TEXT_SECONDARY, true);
+        cy += 40;
 
         return cy;
     }
@@ -435,6 +430,7 @@ public class SettingsScreen extends Screen {
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         if (button != 0) return super.mouseClicked(mouseX, mouseY, button);
         activeSlider = null;
+        activeColorPicker = null;
 
         double my = mouseY - scrollOffset;
         int cw = width - SIDEBAR_W - CONTENT_W_OFFSET;
@@ -544,9 +540,9 @@ public class SettingsScreen extends Screen {
     private boolean handleLibraryClicks(double mx, double my, int cw) {
         int cy = HEADER_H + 6 + 28;
         var templates = CrosshairLibrary.TEMPLATES;
-        int cols = Math.max(2, (cw - 10) / 130);
+        int cols = Math.min(2, Math.max(1, (cw - 10) / 220));
         int cellW = (cw - 10) / cols;
-        int cellH = 56;
+        int cellH = 64;
         int startX = CONTENT_X + 5;
 
         for (int i = 0; i < templates.size(); i++) {
@@ -563,9 +559,8 @@ public class SettingsScreen extends Screen {
         }
 
         int totalRows = (templates.size() + cols - 1) / cols;
-        int discordY = cy + totalRows * (cellH + 6) + 18;
-        if (mx >= CONTENT_X + 5 && mx <= CONTENT_X + cw - 5 && my >= discordY && my <= discordY + 12) {
-            MinecraftClient.getInstance().getClass();
+        int discordY = cy + totalRows * (cellH + 6) + 30;
+        if (mx >= CONTENT_X + 8 && mx <= CONTENT_X + cw - 8 && my >= discordY && my <= discordY + 12) {
             net.minecraft.util.Util.getOperatingSystem().open("https://discord.gg/WThDK2My7e");
             return true;
         }
@@ -595,20 +590,35 @@ public class SettingsScreen extends Screen {
     private boolean handleColorPickerClick(double mx, double my, int cy, int color, Consumer<Integer> onChange) {
         int cw = width - SIDEBAR_W - CONTENT_W_OFFSET;
         var picker = new ColorPickerWidget(CONTENT_X + 5, cy, cw - 10, 170, color, onChange);
-        return picker.mouseClicked(mx, my, 0);
+        if (picker.mouseClicked(mx, my, 0)) {
+            activeColorPicker = picker;
+            return true;
+        }
+        return false;
     }
 
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double dx, double dy) {
-        if (activeSlider != null && button == 0) {
-            return activeSlider.mouseDragged(mouseX, mouseY - scrollOffset, button, dx, dy);
+        if (button != 0) return false;
+        double my = mouseY - scrollOffset;
+        if (activeColorPicker != null) {
+            return activeColorPicker.mouseDragged(mouseX, my, button, dx, dy);
+        }
+        if (activeSlider != null) {
+            return activeSlider.mouseDragged(mouseX, my, button, dx, dy);
         }
         return false;
     }
 
     @Override
     public boolean mouseReleased(double mouseX, double mouseY, int button) {
-        if (activeSlider != null && button == 0) {
+        if (button != 0) return false;
+        if (activeColorPicker != null) {
+            activeColorPicker.mouseReleased(mouseX, mouseY, button);
+            activeColorPicker = null;
+            return true;
+        }
+        if (activeSlider != null) {
             activeSlider.mouseReleased(mouseX, mouseY, button);
             activeSlider = null;
             return true;
