@@ -1,0 +1,41 @@
+{
+    "schemaVersion": 1,
+    "id": "customcross",
+    "version": "${version}",
+    "name": "CustomCross",
+    "description": "Полностью настраиваемый прицел (crosshair). Меняй форму, цвет, размер, толщину и прозрачность. Автосмена цвета при наведении на мобов и игроков. Rainbow-режим, пульсация и многое другое.",
+    "authors": [
+        "ponos_dinozavr"
+    ],
+    "contact": {
+        "homepage": "https://discord.gg/WThDK2My7e",
+        "sources": "https://discord.gg/WThDK2My7e",
+        "issues": "https://discord.gg/WThDK2My7e"
+    },
+    "license": "MIT",
+    "icon": "assets/customcross/icon.png",
+    "environment": "client",
+    "entrypoints": {
+        "fabric-datagen": [
+            "org.example.bindManager.customcross.client.CustomCrossDataGenerator"
+        ],
+        "client": [
+            "org.example.bindManager.customcross.client.CustomCrossClient"
+        ],
+        "main": [
+            "org.example.bindManager.customcross.CustomCross"
+        ]
+    },
+    "mixins": [
+        "customcross.mixins.json",
+        {
+            "config": "customcross.client.mixins.json",
+            "environment": "client"
+        }
+    ],
+    "depends": {
+        "fabricloader": ">=${loader_version}",
+        "fabric-api": "*",
+        "minecraft": "${minecraft_version}"
+    }
+}

@@ -1,0 +1,58 @@
+{
+  "key.customcross.toggle": "Toggle Custom Crosshair",
+  "key.customcross.settings": "Open Crosshair Settings",
+  "category.customcross": "CustomCross",
+
+  "customcross.gui.title": "CustomCross Settings",
+  "customcross.gui.category.general": "General",
+  "customcross.gui.category.appearance": "Appearance",
+  "customcross.gui.category.colors": "Colors",
+  "customcross.gui.category.target": "Target",
+  "customcross.gui.category.effects": "Effects",
+  "customcross.gui.category.library": "Library",
+
+  "customcross.gui.section.general": "General Settings",
+  "customcross.gui.section.shape": "Crosshair Shape",
+  "customcross.gui.section.appearance": "Size and Thickness",
+  "customcross.gui.section.main_color": "Main Color",
+  "customcross.gui.section.line_colors": "Line Colors",
+  "customcross.gui.section.target": "Target Detection",
+  "customcross.gui.section.effects": "Effects Settings",
+  "customcross.gui.section.library": "Crosshair Library",
+
+  "customcross.gui.setting.custom_enable": "Enable Custom Crosshair",
+  "customcross.gui.setting.disable_vanilla": "Disable Vanilla Crosshair",
+  "customcross.gui.setting.separate_lines": "Separate Line Colors",
+  "customcross.gui.setting.target_enable": "Change Color on Target",
+  "customcross.gui.setting.rainbow": "Rainbow Mode",
+  "customcross.gui.setting.pulsing": "Pulsing",
+  "customcross.gui.setting.smooth_transition": "Smooth Color Transition",
+
+  "customcross.gui.shape.classic": "Classic Cross",
+  "customcross.gui.shape.dot": "Dot",
+  "customcross.gui.shape.circle": "Circle",
+  "customcross.gui.shape.square": "Square",
+
+  "customcross.gui.label.size": "Size",
+  "customcross.gui.label.thickness": "Thickness",
+  "customcross.gui.label.length": "Length",
+  "customcross.gui.label.gap": "Gap",
+  "customcross.gui.label.opacity": "Opacity",
+  "customcross.gui.label.speed": "Speed",
+
+  "customcross.gui.target.mob_color": "Mob Target Color",
+  "customcross.gui.target.player_color": "Player Target Color",
+  "customcross.gui.target.other_color": "Other Entity Color",
+  "customcross.gui.target.line_top": "Top Line",
+  "customcross.gui.target.line_bottom": "Bottom Line",
+  "customcross.gui.target.line_left": "Left Line",
+  "customcross.gui.target.line_right": "Right Line",
+
+  "customcross.gui.button.reset": "Reset",
+  "customcross.gui.button.done": "Done",
+
+  "customcross.gui.library.discord": "\u00bb Suggest your crosshairs in our Discord!",
+
+  "customcross.color.picker": "Color Picker",
+  "customcross.color.preview": "Preview"
+}
