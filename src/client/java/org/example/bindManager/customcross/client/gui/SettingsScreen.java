@@ -52,11 +52,11 @@ public class SettingsScreen extends Screen {
     private static final int BG_HEADER = 0xFF4D4D4D;
     private static final int BG_CARD = 0xFF707070;
     private static final int BG_CARD_HOVER = 0xFF7E7E7E;
-    private static final int ACCENT = 0xFF00C853;
-    private static final int ACCENT_HOVER = 0xFF00E676;
+    private static final int ACCENT = 0xFF11FF00;
+    private static final int ACCENT_HOVER = 0xFF11FF00;
     private static final int ACCENT_DARK = 0xFF00A845;
-    private static final int DISCORD_BLUE = 0xFF42A5F5;
-    private static final int DISCORD_BLUE_HOVER = 0xFF64B5F6;
+    private static final int DISCORD_BLUE = 0xFFDCDCDE;
+    private static final int DISCORD_BLUE_HOVER = 0xFF3E48C9;
     private static final int TEXT_PRIMARY = 0xFFE0E0E0;
     private static final int TEXT_BRIGHT = 0xFFFFFFFF;
     private static final int TEXT_SECONDARY = 0xFFCCCCCC;
