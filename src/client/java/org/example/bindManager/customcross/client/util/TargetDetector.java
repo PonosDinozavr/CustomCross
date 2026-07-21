@@ -33,7 +33,8 @@ public final class TargetDetector {
         Entity closest = null;
         double closestDist = blockDist;
         for (Entity entity : client.world.getEntitiesByClass(LivingEntity.class, searchBox,
-                e -> e != camera && e.isAlive() && !e.isSpectator())) {
+                e -> e != camera && e.isAlive() && !e.isSpectator()
+                        && !(e.isInvisible() && hasNoArmor((LivingEntity) e)))) {
             Box entityBox = entity.getBoundingBox().expand(entity.getTargetingMargin());
             Optional<Vec3d> hit = entityBox.raycast(cameraPos, checkEnd);
             if (hit.isPresent()) {
@@ -47,6 +48,13 @@ public final class TargetDetector {
         }
         if (closest instanceof PlayerEntity) return TargetType.PLAYER;
         return TargetType.MOB;
+    }
+
+    private static boolean hasNoArmor(LivingEntity entity) {
+        for (var stack : entity.getArmorItems()) {
+            if (!stack.isEmpty()) return false;
+        }
+        return true;
     }
 
     public enum TargetType { NONE, PLAYER, MOB, BLOCK }
