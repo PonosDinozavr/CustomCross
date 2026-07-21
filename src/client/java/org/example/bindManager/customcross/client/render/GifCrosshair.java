@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public final class GifCrosshair {
@@ -32,15 +33,17 @@ public final class GifCrosshair {
 
     public static void render(DrawContext context, int cx, int cy, String assetPath, float scale, float opacity) {
         if (assetPath.endsWith(".gif")) {
-            renderGif(context, cx, cy, assetPath, scale, opacity);
+            if (!renderGif(context, cx, cy, assetPath, scale, opacity)) {
+                renderStatic(context, cx, cy, assetPath, scale, opacity);
+            }
         } else {
             renderStatic(context, cx, cy, assetPath, scale, opacity);
         }
     }
 
-    private static void renderGif(DrawContext context, int cx, int cy, String assetPath, float scale, float opacity) {
+    private static boolean renderGif(DrawContext context, int cx, int cy, String assetPath, float scale, float opacity) {
         GifEntry entry = getOrLoad(assetPath);
-        if (entry == null) return;
+        if (entry == null) return false;
 
         long now = System.currentTimeMillis();
         int frame = 0;
@@ -54,7 +57,7 @@ public final class GifCrosshair {
         }
 
         Identifier tex = entry.textures[frame];
-        if (tex == null) return;
+        if (tex == null) return false;
 
         int size = Math.max((int) (32 * scale), 4);
 
@@ -70,6 +73,7 @@ public final class GifCrosshair {
 
         MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers().draw();
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
+        return true;
     }
 
     private static void renderStatic(DrawContext context, int cx, int cy, String assetPath, float scale, float opacity) {
@@ -106,19 +110,24 @@ public final class GifCrosshair {
         return loadPng(assetPath);
     }
 
-    private static byte[] readAllBytes(String assetPath) throws IOException {
-        if (assetPath.startsWith("scanned/")) {
-            String relative = assetPath.substring("scanned/".length());
-            Path file = FabricLoader.getInstance().getConfigDir().resolve("customcross/crosshairs").resolve(relative);
-            if (Files.exists(file)) {
-                return Files.readAllBytes(file);
+    private static byte[] readAllBytes(String assetPath) {
+        try {
+            if (assetPath.startsWith("scanned/")) {
+                String relative = assetPath.substring("scanned/".length());
+                Path file = FabricLoader.getInstance().getConfigDir().resolve("customcross/crosshairs").resolve(relative);
+                if (Files.exists(file)) {
+                    return Files.readAllBytes(file);
+                }
+                CustomCross.LOGGER.warn("Scanned crosshair file not found: {}", file);
+                return null;
             }
-            CustomCross.LOGGER.warn("Scanned crosshair file not found: {}", file);
+            try (InputStream is = MinecraftClient.getInstance().getResourceManager()
+                    .open(Identifier.of("customcross", assetPath))) {
+                return is.readAllBytes();
+            }
+        } catch (IOException e) {
+            CustomCross.LOGGER.error("Failed to read bytes for: {}", assetPath, e);
             return null;
-        }
-        try (InputStream is = MinecraftClient.getInstance().getResourceManager()
-                .open(Identifier.of("customcross", assetPath))) {
-            return is.readAllBytes();
         }
     }
 
@@ -127,12 +136,26 @@ public final class GifCrosshair {
             byte[] bytes = readAllBytes(assetPath);
             if (bytes == null) return null;
 
-            ImageReader reader = ImageIO.getImageReadersByFormatName("gif").next();
             ImageInputStream iis = ImageIO.createImageInputStream(new ByteArrayInputStream(bytes));
+            Iterator<ImageReader> readers = ImageIO.getImageReaders(iis);
+            if (!readers.hasNext()) {
+                CustomCross.LOGGER.warn("No ImageReader found for: {}", assetPath);
+                return null;
+            }
+
+            ImageReader reader = readers.next();
             reader.setInput(iis, false);
 
-            int numFrames = reader.getNumImages(true);
-            if (numFrames <= 0) return null;
+            int numFrames = 1;
+            try {
+                numFrames = reader.getNumImages(true);
+            } catch (Exception ignored) {}
+
+            if (numFrames <= 1) {
+                reader.dispose();
+                iis.close();
+                return null;
+            }
 
             List<Identifier> texList = new ArrayList<>();
             List<Integer> delayList = new ArrayList<>();
