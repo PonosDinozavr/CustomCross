@@ -600,7 +600,10 @@ public class SettingsScreen extends Screen {
     @Override
     public boolean mouseClicked(net.minecraft.client.input.MouseButtonEvent click, boolean bl) {
         double mouseX = click.x(), mouseY = click.y();
-        int button = click.button();
+        int rawButton = click.button();
+        // In 26.x (SDL3), MOUSE_BUTTON_LEFT = 1, MOUSE_BUTTON_RIGHT = 3. In GLFW, LEFT = 0, RIGHT = 1.
+        int button = (rawButton == 1 || rawButton == 0) ? 0 : 
+                     (rawButton == 3 || rawButton == 2) ? 1 : rawButton;
         if (button != 0 && button != 1) return super.mouseClicked(click, bl);
         activeSlider = null;
         activeColorPicker = null;
@@ -833,7 +836,7 @@ public class SettingsScreen extends Screen {
 
     private boolean handleSliderClick(double mx, double my, int cx, int cy, int cw, String key, float initial, float min, float max, Consumer<Float> onChange) {
         var slider = new ModernWidgets.Slider(cx, cy, cw, 30, label(key), initial, min, max, onChange);
-        var click = new net.minecraft.client.input.MouseButtonEvent(mx, my, new net.minecraft.client.input.MouseButtonInfo(0, 0));
+        var click = new net.minecraft.client.input.MouseButtonEvent(mx, my, new net.minecraft.client.input.MouseButtonInfo(1, 0));
         if (slider.mouseClicked(click, true)) {
             activeSlider = slider;
             return true;
@@ -843,7 +846,7 @@ public class SettingsScreen extends Screen {
 
     private boolean handleColorPickerClick(double mx, double my, int cx, int cy, int cw, int color, Consumer<Integer> onChange) {
         var picker = new ColorPickerWidget(cx + 4, cy + 4, cw - 8, 168, color, onChange);
-        var click = new net.minecraft.client.input.MouseButtonEvent(mx, my, new net.minecraft.client.input.MouseButtonInfo(0, 0));
+        var click = new net.minecraft.client.input.MouseButtonEvent(mx, my, new net.minecraft.client.input.MouseButtonInfo(1, 0));
         if (picker.mouseClicked(click, true)) {
             activeColorPicker = picker;
             return true;
@@ -854,7 +857,9 @@ public class SettingsScreen extends Screen {
     @Override
     public boolean mouseDragged(net.minecraft.client.input.MouseButtonEvent click, double dx, double dy) {
         double mouseX = click.x(), mouseY = click.y();
-        int button = click.button();
+        int rawButton = click.button();
+        int button = (rawButton == 1 || rawButton == 0) ? 0 : 
+                     (rawButton == 3 || rawButton == 2) ? 1 : rawButton;
         if (draggingScrollbar) {
             int sbY = HEADER_H + 4;
             int sbH = height - HEADER_H - FOOTER_H - 8;
@@ -891,7 +896,9 @@ public class SettingsScreen extends Screen {
     @Override
     public boolean mouseReleased(net.minecraft.client.input.MouseButtonEvent click) {
         double mouseX = click.x(), mouseY = click.y();
-        int button = click.button();
+        int rawButton = click.button();
+        int button = (rawButton == 1 || rawButton == 0) ? 0 : 
+                     (rawButton == 3 || rawButton == 2) ? 1 : rawButton;
         draggingScrollbar = false;
         isDrawingCanvas = false;
         if (activeColorPicker != null) {
