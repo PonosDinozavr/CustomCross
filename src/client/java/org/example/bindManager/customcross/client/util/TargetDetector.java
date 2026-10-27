@@ -4,57 +4,28 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.RaycastContext;
-import java.util.Optional;
 
 public final class TargetDetector {
-    private static final double FALLBACK_RANGE = 3.5;
 
     public static TargetType getTargetType(MinecraftClient client, float tickDelta) {
-        if (client.player == null || client.world == null) return TargetType.NONE;
-        double reach = client.player.getEntityInteractionRange();
-        if (reach <= 0) reach = FALLBACK_RANGE;
-        Entity camera = client.getCameraEntity() != null ? client.getCameraEntity() : client.player;
-        Vec3d cameraPos = camera.getCameraPosVec(tickDelta);
-        Vec3d rotationVec = camera.getRotationVec(tickDelta);
-        Vec3d endPos = cameraPos.add(rotationVec.multiply(reach));
-        HitResult blockHit = client.world.raycast(new RaycastContext(
-                cameraPos, endPos, RaycastContext.ShapeType.COLLIDER,
-                RaycastContext.FluidHandling.NONE, camera));
-        double blockDist = blockHit.getType() == HitResult.Type.BLOCK
-                ? cameraPos.distanceTo(blockHit.getPos()) : reach;
-        Vec3d checkEnd = cameraPos.add(rotationVec.multiply(blockDist));
-        Box searchBox = camera.getBoundingBox()
-                .stretch(rotationVec.multiply(blockDist)).expand(1.0);
-        Entity closest = null;
-        double closestDist = blockDist;
-        for (Entity entity : client.world.getEntitiesByClass(LivingEntity.class, searchBox,
-                e -> e != camera && e.isAlive() && !e.isSpectator()
-                        && !(e.isInvisible() && hasNoArmor((LivingEntity) e)))) {
-            Box entityBox = entity.getBoundingBox().expand(entity.getTargetingMargin());
-            Optional<Vec3d> hit = entityBox.raycast(cameraPos, checkEnd);
-            if (hit.isPresent()) {
-                double dist = cameraPos.distanceTo(hit.get());
-                if (dist < closestDist) { closestDist = dist; closest = entity; }
+        if (client == null || client.player == null || client.world == null) return TargetType.NONE;
+
+        HitResult target = client.crosshairTarget;
+        if (target == null) return TargetType.NONE;
+
+        if (target.getType() == HitResult.Type.ENTITY && target instanceof EntityHitResult ehr) {
+            Entity entity = ehr.getEntity();
+            if (entity instanceof PlayerEntity) return TargetType.PLAYER;
+            if (entity instanceof LivingEntity) return TargetType.MOB;
+        } else if (target.getType() == HitResult.Type.BLOCK && target instanceof BlockHitResult bhr) {
+            if (bhr.getType() == HitResult.Type.BLOCK) {
+                return TargetType.BLOCK;
             }
         }
-        if (closest == null) {
-            if (blockHit.getType() == HitResult.Type.BLOCK) return TargetType.BLOCK;
-            return TargetType.NONE;
-        }
-        if (closest instanceof PlayerEntity) return TargetType.PLAYER;
-        return TargetType.MOB;
-    }
-
-    private static boolean hasNoArmor(LivingEntity entity) {
-        for (var stack : entity.getArmorItems()) {
-            if (!stack.isEmpty()) return false;
-        }
-        return true;
+        return TargetType.NONE;
     }
 
     public enum TargetType { NONE, PLAYER, MOB, BLOCK }

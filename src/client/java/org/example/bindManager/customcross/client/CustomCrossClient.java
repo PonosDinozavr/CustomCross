@@ -2,14 +2,14 @@ package org.example.bindManager.customcross.client;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.util.InputUtil;
+import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.sound.SoundEvents;
+import net.minecraft.util.ActionResult;
 import org.example.bindManager.customcross.client.config.ConfigManager;
 import org.example.bindManager.customcross.client.gui.SettingsScreen;
 import org.example.bindManager.customcross.client.input.KeyBindings;
 import org.example.bindManager.customcross.client.render.CrosshairRenderer;
-import org.lwjgl.glfw.GLFW;
 
 public class CustomCrossClient implements ClientModInitializer {
 
@@ -18,6 +18,16 @@ public class CustomCrossClient implements ClientModInitializer {
         ConfigManager.load();
         KeyBindings.register();
         CrosshairRenderer.register();
+
+        AttackEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> {
+            if (world.isClient() && entity instanceof LivingEntity) {
+                CrosshairRenderer.triggerHitmarker();
+                if (ConfigManager.getConfig().isHitSoundEnabled()) {
+                    player.playSound(SoundEvents.ENTITY_ARROW_HIT_PLAYER, 0.5f, 1.2f);
+                }
+            }
+            return ActionResult.PASS;
+        });
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             if (KeyBindings.settingsKey.wasPressed()) {

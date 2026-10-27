@@ -12,6 +12,7 @@ import net.minecraft.client.texture.NativeImageBackedTexture;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.example.bindManager.customcross.client.util.ColorUtils;
+import org.example.bindManager.customcross.client.util.TextureHelper;
 
 import java.util.function.Consumer;
 
@@ -27,9 +28,9 @@ public class ColorPickerWidget extends ClickableWidget {
     private final TextFieldWidget hexField;
     private boolean updating = false;
 
-    private NativeImageBackedTexture svTexture;
-    private Identifier svTextureId;
-    private float lastHue = -1;
+    private static NativeImageBackedTexture svTexture;
+    private static Identifier svTextureId;
+    private static float cachedHue = -1f;
 
     public ColorPickerWidget(int x, int y, int width, int height, int initialColor, Consumer<Integer> onChange) {
         super(x, y, width, height, Text.translatable("customcross.color.picker"));
@@ -83,32 +84,42 @@ public class ColorPickerWidget extends ClickableWidget {
         hexField.render(context, mx, my, delta);
     }
 
-    private void ensureSvTexture() {
-        if (svTexture == null || Math.abs(hue - lastHue) > 0.001f) {
-            if (svTexture != null) {
-                MinecraftClient.getInstance().getTextureManager().destroyTexture(svTextureId);
-            }
-            NativeImage img = new NativeImage(PICKER_SIZE, PICKER_SIZE, true);
-            for (int px = 0; px < PICKER_SIZE; px++) {
-                for (int py = 0; py < PICKER_SIZE; py++) {
-                    float sat = px / (float) PICKER_SIZE;
-                    float bri = 1 - py / (float) PICKER_SIZE;
-                    img.setColorArgb(px, py, ColorUtils.hsvToArgb(hue, sat, bri, 1));
-                }
-            }
-            svTexture = new NativeImageBackedTexture(img);
-            svTextureId = Identifier.of("customcross", "picker_sv_" + System.identityHashCode(this));
+    private static void updateSvTexture(float hue) {
+        if (svTexture == null) {
+            NativeImage img = new NativeImage(PICKER_SIZE, PICKER_SIZE, false);
+            svTexture = TextureHelper.createTexture("picker_sv_shared", img);
+            svTextureId = Identifier.of("customcross", "picker_sv_shared");
             MinecraftClient.getInstance().getTextureManager().registerTexture(svTextureId, svTexture);
-            lastHue = hue;
+        }
+        if (Math.abs(hue - cachedHue) > 0.002f) {
+            NativeImage img = svTexture.getImage();
+            if (img != null) {
+                for (int px = 0; px < PICKER_SIZE; px++) {
+                    for (int py = 0; py < PICKER_SIZE; py++) {
+                        float sat = px / (float) PICKER_SIZE;
+                        float bri = 1.0f - py / (float) PICKER_SIZE;
+                        img.setColorArgb(px, py, ColorUtils.hsvToArgb(hue, sat, bri, 1.0f));
+                    }
+                }
+                svTexture.upload();
+            }
+            cachedHue = hue;
         }
     }
 
+    private static void drawBorder(DrawContext ctx, int x, int y, int w, int h, int color) {
+        ctx.fill(x, y, x + w, y + 1, color);
+        ctx.fill(x, y + h - 1, x + w, y + h, color);
+        ctx.fill(x, y + 1, x + 1, y + h - 1, color);
+        ctx.fill(x + w - 1, y + 1, x + w, y + h - 1, color);
+    }
+
     private void drawSvPicker(DrawContext context) {
-        ensureSvTexture();
+        updateSvTexture(hue);
         context.drawTexture(RenderLayer::getGuiTextured, svTextureId,
                 contentX, contentY, PICKER_SIZE, PICKER_SIZE,
                 PICKER_SIZE, PICKER_SIZE, PICKER_SIZE, PICKER_SIZE);
-        context.drawBorder(contentX, contentY, PICKER_SIZE, PICKER_SIZE, 0xFFCCCCCC);
+        drawBorder(context, contentX, contentY, PICKER_SIZE, PICKER_SIZE, 0xFF44444E);
         int cx = contentX + (int) (saturation * PICKER_SIZE), cy = contentY + (int) ((1 - brightness) * PICKER_SIZE);
         context.fill(cx - 4, cy - 1, cx + 5, cy + 2, 0xFF000000);
         context.fill(cx - 1, cy - 4, cx + 2, cy + 5, 0xFF000000);
@@ -122,7 +133,7 @@ public class ColorPickerWidget extends ClickableWidget {
             context.fill(sx, contentY + i, sx + SLIDER_W, contentY + i + 1,
                     ColorUtils.hsvToArgb(i / (float) PICKER_SIZE, 1, 1, 1));
         }
-        context.drawBorder(sx, contentY, SLIDER_W, PICKER_SIZE, 0xFFCCCCCC);
+        drawBorder(context, sx, contentY, SLIDER_W, PICKER_SIZE, 0xFF44444E);
         int indY = contentY + (int) (hue * PICKER_SIZE);
         context.fill(sx - 1, indY - 2, sx + SLIDER_W + 1, indY + 3, 0xFFFFFFFF);
         context.fill(sx, indY - 1, sx + SLIDER_W, indY + 2, 0xFF000000);
@@ -135,10 +146,15 @@ public class ColorPickerWidget extends ClickableWidget {
                 if (((px / 4) + (py / 4)) % 2 == 0)
                     context.fill(ax + px, contentY + py, Math.min(ax + px + 4, ax + barW),
                             Math.min(contentY + py + 4, contentY + PICKER_SIZE), 0xFFFFFFFF);
+                else
+                    context.fill(ax + px, contentY + py, Math.min(ax + px + 4, ax + barW),
+                            Math.min(contentY + py + 4, contentY + PICKER_SIZE), 0xFF888888);
+
         for (int i = 0; i < PICKER_SIZE; i++)
             context.fill(ax, contentY + i, ax + barW, contentY + i + 1,
                     ColorUtils.hsvToArgb(hue, saturation, brightness, 1 - i / (float) PICKER_SIZE));
-        context.drawBorder(ax, contentY, barW, PICKER_SIZE, 0xFFCCCCCC);
+
+        drawBorder(context, ax, contentY, barW, PICKER_SIZE, 0xFF44444E);
         int indY = contentY + (int) ((1 - alpha) * PICKER_SIZE);
         context.fill(ax - 1, indY - 2, ax + barW + 1, indY + 3, 0xFFFFFFFF);
         context.fill(ax, indY - 1, ax + barW, indY + 2, 0xFF000000);
@@ -147,7 +163,7 @@ public class ColorPickerWidget extends ClickableWidget {
     private void drawPreview(DrawContext context) {
         int px = contentX + PICKER_SIZE + 12 + SLIDER_W + 6 + SLIDER_W + 12;
         context.fill(px, contentY, px + PREVIEW_SIZE, contentY + PREVIEW_SIZE, color);
-        context.drawBorder(px, contentY, PREVIEW_SIZE, PREVIEW_SIZE, 0xFFCCCCCC);
+        drawBorder(context, px, contentY, PREVIEW_SIZE, PREVIEW_SIZE, 0xFF44444E);
         context.drawText(MinecraftClient.getInstance().textRenderer, Text.translatable("customcross.color.preview"),
                 px, contentY + PREVIEW_SIZE + 4, 0xFFDDDDDD, true);
         context.drawText(MinecraftClient.getInstance().textRenderer, Text.literal(ColorUtils.toHex(color)),

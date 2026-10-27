@@ -23,7 +23,7 @@ public final class ConfigManager {
                 String json = Files.readString(CONFIG_PATH);
                 config = GSON.fromJson(json, CrosshairConfig.class);
                 if (config == null) config = new CrosshairConfig();
-            } catch (IOException e) {
+            } catch (Exception e) {
                 config = new CrosshairConfig();
             }
         } else {
@@ -39,5 +39,36 @@ public final class ConfigManager {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static String exportCode() {
+        try {
+            String json = GSON.toJson(config);
+            return java.util.Base64.getEncoder().encodeToString(json.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+        } catch (Exception e) {
+            return "";
+        }
+    }
+
+    public static boolean importCode(String code) {
+        try {
+            String json = new String(java.util.Base64.getDecoder().decode(code.trim()), java.nio.charset.StandardCharsets.UTF_8);
+            CrosshairConfig parsed = GSON.fromJson(json, CrosshairConfig.class);
+            if (parsed != null) {
+                config = parsed;
+                save();
+                return true;
+            }
+        } catch (Exception e) {
+            try {
+                CrosshairConfig parsed = GSON.fromJson(code.trim(), CrosshairConfig.class);
+                if (parsed != null) {
+                    config = parsed;
+                    save();
+                    return true;
+                }
+            } catch (Exception ignored) {}
+        }
+        return false;
     }
 }
