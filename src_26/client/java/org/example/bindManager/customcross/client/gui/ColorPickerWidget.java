@@ -178,7 +178,7 @@ public class ColorPickerWidget extends AbstractWidget {
 
     @Override
     public boolean mouseClicked(MouseButtonEvent click, boolean bl) {
-        if (click.button() != 0) return false;
+        if (click.button() != 0 && click.button() != 1) return false;
         double mx = click.x(), my = click.y();
         if (isInPicker(mx, my)) { draggingPicker = true; updatePicker(mx, my); return true; }
         if (isInHueSlider(mx, my)) { draggingHue = true; updateHue(my); return true; }
