@@ -9,7 +9,7 @@
     ],
     "contact": {
         "homepage": "https://discord.gg/WThDK2My7e",
-        "sources": "https://github.com/PonosDinozavr/CustomCross",
+        "sources": "https://github.com/PonosDinozavr/CustomCross/tree/1.21.11",
         "issues": "https://github.com/PonosDinozavr/CustomCross/issues"
     },
     "license": "MIT",
@@ -33,6 +33,6 @@
     "depends": {
         "fabricloader": ">=${loader_version}",
         "fabric-api": "*",
-        "minecraft": "${minecraft_version}"
+        "minecraft": "1.21.11"
     }
 }
