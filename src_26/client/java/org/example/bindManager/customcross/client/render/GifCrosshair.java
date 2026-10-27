@@ -1,6 +1,5 @@
 package org.example.bindManager.customcross.client.render;
 
-import net.minecraft.client.renderer.RenderPipelines;
 import com.mojang.blaze3d.platform.NativeImage;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
@@ -66,12 +65,10 @@ public final class GifCrosshair {
         if (tex == null) return false;
 
         int size = Math.max((int) (32 * scale), 4);
+        int x0 = cx - size / 2;
+        int y0 = cy - size / 2;
 
-        context.blit(
-                RenderPipelines.GUI_TEXTURED,
-                tex, cx - size / 2, cy - size / 2,
-                0f, 0f, size, size, size, size
-        );
+        context.blit(tex, x0, y0, x0 + size, y0 + size, 0f, 1f, 0f, 1f);
         return true;
     }
 
@@ -80,12 +77,10 @@ public final class GifCrosshair {
         if (entry == null) return;
 
         int size = Math.max((int) (32 * scale), 4);
+        int x0 = cx - size / 2;
+        int y0 = cy - size / 2;
 
-        context.blit(
-                RenderPipelines.GUI_TEXTURED,
-                entry.textureId, cx - size / 2, cy - size / 2,
-                0f, 0f, size, size, size, size
-        );
+        context.blit(entry.textureId, x0, y0, x0 + size, y0 + size, 0f, 1f, 0f, 1f);
     }
 
     private static GifEntry getOrLoad(String assetPath) {
