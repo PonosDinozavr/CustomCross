@@ -58,16 +58,29 @@ dependencies {
     implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 }
 
+def mcDep = project.minecraft_version
+if (project.minecraft_version.startsWith("26.1")) {
+    mcDep = ">=26.1 <=26.1.2"
+} else if (project.minecraft_version.startsWith("26.2")) {
+    mcDep = ">=26.2 <=26.2.2"
+} else if (project.minecraft_version.startsWith("26.3")) {
+    mcDep = ">=26.3 <=26.3.2"
+} else if (project.minecraft_version.startsWith("1.21.5")) {
+    mcDep = ">=1.21.5 <=1.21.8"
+}
+
 processResources {
     inputs.property "version", project.version
     inputs.property "minecraft_version", project.minecraft_version
     inputs.property "loader_version", project.loader_version
+    inputs.property "minecraft_dependency", mcDep
     filteringCharset "UTF-8"
 
     filesMatching("fabric.mod.json") {
         expand "version": project.version,
                 "minecraft_version": project.minecraft_version,
-                "loader_version": project.loader_version
+                "loader_version": project.loader_version,
+                "minecraft_dependency": mcDep
     }
 }
 
