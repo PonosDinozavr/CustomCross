@@ -1,6 +1,5 @@
 package org.example.bindManager.customcross.client.gui;
 
-import net.minecraft.client.renderer.RenderPipelines;
 import com.mojang.blaze3d.platform.NativeImage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -124,7 +123,7 @@ public class ColorPickerWidget extends AbstractWidget {
 
     private void drawSvPicker(GuiGraphicsExtractor context) {
         updateSvTexture(hue);
-        context.blit(RenderPipelines.GUI_TEXTURED, svTextureId, contentX, contentY, 0f, 0f, PICKER_SIZE, PICKER_SIZE, PICKER_SIZE, PICKER_SIZE);
+        context.blit(svTextureId, contentX, contentY, contentX + PICKER_SIZE, contentY + PICKER_SIZE, 0f, 1f, 0f, 1f);
         drawBorder(context, contentX, contentY, PICKER_SIZE, PICKER_SIZE, 0xFF44444E);
         int cx = contentX + (int) (saturation * PICKER_SIZE), cy = contentY + (int) ((1 - brightness) * PICKER_SIZE);
         context.fill(cx - 4, cy - 1, cx + 5, cy + 2, 0xFF000000);
@@ -178,7 +177,7 @@ public class ColorPickerWidget extends AbstractWidget {
 
     @Override
     public boolean mouseClicked(MouseButtonEvent click, boolean bl) {
-        if (click.button() != 0) return false;
+        if (click.button() != 0 && click.button() != 1) return false;
         double mx = click.x(), my = click.y();
         if (isInPicker(mx, my)) { draggingPicker = true; updatePicker(mx, my); return true; }
         if (isInHueSlider(mx, my)) { draggingHue = true; updateHue(my); return true; }

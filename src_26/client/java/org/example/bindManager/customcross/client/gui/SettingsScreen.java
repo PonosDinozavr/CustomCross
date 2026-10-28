@@ -423,7 +423,16 @@ public class SettingsScreen extends Screen {
                 ctx.fill(ix - 6, iy - 1, ix + 6, iy + 1, color);
             }
             case DOT -> ctx.fill(ix - 2, iy - 2, ix + 2, iy + 2, color);
-            case CIRCLE -> drawBorder(ctx, ix - 5, iy - 5, 10, 10, color);
+            case CIRCLE -> {
+                ctx.fill(ix - 2, iy - 4, ix + 3, iy - 3, color);
+                ctx.fill(ix - 2, iy + 4, ix + 3, iy + 5, color);
+                ctx.fill(ix - 4, iy - 2, ix - 3, iy + 3, color);
+                ctx.fill(ix + 4, iy - 2, ix + 5, iy + 3, color);
+                ctx.fill(ix - 3, iy - 3, ix - 2, iy - 2, color);
+                ctx.fill(ix + 3, iy - 3, ix + 4, iy - 2, color);
+                ctx.fill(ix - 3, iy + 3, ix - 2, iy + 4, color);
+                ctx.fill(ix + 3, iy + 3, ix + 4, iy + 4, color);
+            }
             case SQUARE -> {
                 ctx.fill(ix - 5, iy - 5, ix + 5, iy - 3, color);
                 ctx.fill(ix - 5, iy + 3, ix + 5, iy + 5, color);
@@ -431,27 +440,46 @@ public class SettingsScreen extends Screen {
                 ctx.fill(ix + 3, iy - 5, ix + 5, iy + 5, color);
             }
             case HEART -> {
-                ctx.fill(ix - 4, iy - 3, ix, iy + 1, color);
-                ctx.fill(ix, iy - 3, ix + 4, iy + 1, color);
-                ctx.fill(ix - 3, iy, ix + 3, iy + 4, color);
+                ctx.fill(ix - 3, iy - 3, ix - 1, iy - 2, color);
+                ctx.fill(ix + 1, iy - 3, ix + 3, iy - 2, color);
+                ctx.fill(ix - 3, iy - 2, ix + 3, iy, color);
+                ctx.fill(ix - 2, iy, ix + 2, iy + 1, color);
+                ctx.fill(ix - 1, iy + 1, ix + 1, iy + 2, color);
+                ctx.fill(ix, iy + 2, ix + 1, iy + 3, color);
             }
             case STAR -> {
-                ctx.fill(ix - 1, iy - 5, ix + 1, iy + 5, color);
-                ctx.fill(ix - 5, iy - 1, ix + 5, iy + 1, color);
-                ctx.fill(ix - 3, iy - 3, ix - 1, iy - 1, color);
-                ctx.fill(ix + 1, iy + 1, ix + 3, iy + 3, color);
+                ctx.fill(ix, iy - 5, ix + 1, iy + 6, color);
+                ctx.fill(ix - 5, iy, ix + 6, iy + 1, color);
+                for (int i = 1; i <= 2; i++) {
+                    ctx.fill(ix - i, iy - i, ix - i + 1, iy - i + 1, color);
+                    ctx.fill(ix + i, iy - i, ix + i + 1, iy - i + 1, color);
+                    ctx.fill(ix - i, iy + i, ix - i + 1, iy + i + 1, color);
+                    ctx.fill(ix + i, iy + i, ix + i + 1, iy + i + 1, color);
+                }
             }
             case CHEVRON -> {
-                ctx.fill(ix - 3, iy - 4, ix - 1, iy - 2, color);
-                ctx.fill(ix + 1, iy - 4, ix + 3, iy - 2, color);
-                ctx.fill(ix - 1, iy - 2, ix + 1, iy, color);
-                ctx.fill(ix - 3, iy + 2, ix - 1, iy + 4, color);
-                ctx.fill(ix + 1, iy + 2, ix + 3, iy + 4, color);
-                ctx.fill(ix - 1, iy, ix + 1, iy + 2, color);
+                ctx.fill(ix, iy - 6, ix + 1, iy - 5, color);
+                ctx.fill(ix - 1, iy - 5, ix, iy - 4, color);
+                ctx.fill(ix + 1, iy - 5, ix + 2, iy - 4, color);
+                ctx.fill(ix - 2, iy - 4, ix - 1, iy - 3, color);
+                ctx.fill(ix + 2, iy - 4, ix + 3, iy - 3, color);
+
+                ctx.fill(ix, iy + 5, ix + 1, iy + 6, color);
+                ctx.fill(ix - 1, iy + 4, ix, iy + 5, color);
+                ctx.fill(ix + 1, iy + 4, ix + 2, iy + 5, color);
+                ctx.fill(ix - 2, iy + 3, ix - 1, iy + 4, color);
+                ctx.fill(ix + 2, iy + 3, ix + 3, iy + 4, color);
             }
             case DUAL -> {
-                ctx.fill(ix - 1, iy - 1, ix + 1, iy + 1, color);
-                drawBorder(ctx, ix - 5, iy - 5, 10, 10, color);
+                ctx.fill(ix - 1, iy - 1, ix + 2, iy + 2, color);
+                ctx.fill(ix - 2, iy - 4, ix + 3, iy - 3, color);
+                ctx.fill(ix - 2, iy + 4, ix + 3, iy + 5, color);
+                ctx.fill(ix - 4, iy - 2, ix - 3, iy + 3, color);
+                ctx.fill(ix + 4, iy - 2, ix + 5, iy + 3, color);
+                ctx.fill(ix - 3, iy - 3, ix - 2, iy - 2, color);
+                ctx.fill(ix + 3, iy - 3, ix + 4, iy - 2, color);
+                ctx.fill(ix - 3, iy + 3, ix - 2, iy + 4, color);
+                ctx.fill(ix + 3, iy + 3, ix + 4, iy + 4, color);
             }
             case PIXEL_CANVAS -> {
                 for (int py = -4; py <= 4; py += 3) {
@@ -600,7 +628,10 @@ public class SettingsScreen extends Screen {
     @Override
     public boolean mouseClicked(net.minecraft.client.input.MouseButtonEvent click, boolean bl) {
         double mouseX = click.x(), mouseY = click.y();
-        int button = click.button();
+        int rawButton = click.button();
+        // In 26.x (SDL3), MOUSE_BUTTON_LEFT = 1, MOUSE_BUTTON_RIGHT = 3. In GLFW, LEFT = 0, RIGHT = 1.
+        int button = (rawButton == 1 || rawButton == 0) ? 0 : 
+                     (rawButton == 3 || rawButton == 2) ? 1 : rawButton;
         if (button != 0 && button != 1) return super.mouseClicked(click, bl);
         activeSlider = null;
         activeColorPicker = null;
@@ -833,7 +864,7 @@ public class SettingsScreen extends Screen {
 
     private boolean handleSliderClick(double mx, double my, int cx, int cy, int cw, String key, float initial, float min, float max, Consumer<Float> onChange) {
         var slider = new ModernWidgets.Slider(cx, cy, cw, 30, label(key), initial, min, max, onChange);
-        var click = new net.minecraft.client.input.MouseButtonEvent(mx, my, new net.minecraft.client.input.MouseButtonInfo(0, 0));
+        var click = new net.minecraft.client.input.MouseButtonEvent(mx, my, new net.minecraft.client.input.MouseButtonInfo(1, 0));
         if (slider.mouseClicked(click, true)) {
             activeSlider = slider;
             return true;
@@ -843,7 +874,7 @@ public class SettingsScreen extends Screen {
 
     private boolean handleColorPickerClick(double mx, double my, int cx, int cy, int cw, int color, Consumer<Integer> onChange) {
         var picker = new ColorPickerWidget(cx + 4, cy + 4, cw - 8, 168, color, onChange);
-        var click = new net.minecraft.client.input.MouseButtonEvent(mx, my, new net.minecraft.client.input.MouseButtonInfo(0, 0));
+        var click = new net.minecraft.client.input.MouseButtonEvent(mx, my, new net.minecraft.client.input.MouseButtonInfo(1, 0));
         if (picker.mouseClicked(click, true)) {
             activeColorPicker = picker;
             return true;
@@ -854,7 +885,9 @@ public class SettingsScreen extends Screen {
     @Override
     public boolean mouseDragged(net.minecraft.client.input.MouseButtonEvent click, double dx, double dy) {
         double mouseX = click.x(), mouseY = click.y();
-        int button = click.button();
+        int rawButton = click.button();
+        int button = (rawButton == 1 || rawButton == 0) ? 0 : 
+                     (rawButton == 3 || rawButton == 2) ? 1 : rawButton;
         if (draggingScrollbar) {
             int sbY = HEADER_H + 4;
             int sbH = height - HEADER_H - FOOTER_H - 8;
@@ -891,7 +924,9 @@ public class SettingsScreen extends Screen {
     @Override
     public boolean mouseReleased(net.minecraft.client.input.MouseButtonEvent click) {
         double mouseX = click.x(), mouseY = click.y();
-        int button = click.button();
+        int rawButton = click.button();
+        int button = (rawButton == 1 || rawButton == 0) ? 0 : 
+                     (rawButton == 3 || rawButton == 2) ? 1 : rawButton;
         draggingScrollbar = false;
         isDrawingCanvas = false;
         if (activeColorPicker != null) {
@@ -925,5 +960,5 @@ public class SettingsScreen extends Screen {
     private void save() { ConfigManager.save(); }
 
     @Override
-    public void onClose() { Minecraft.getInstance().gui.setScreen(parent); }
+    public void onClose() { org.example.bindManager.customcross.client.util.ScreenHelper.setScreen(Minecraft.getInstance(), parent); }
 }

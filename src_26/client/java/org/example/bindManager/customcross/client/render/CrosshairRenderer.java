@@ -9,6 +9,7 @@ import org.example.bindManager.customcross.client.config.CrosshairConfig;
 import org.example.bindManager.customcross.client.config.CrosshairShape;
 import org.example.bindManager.customcross.client.util.AnimationHandler;
 import org.example.bindManager.customcross.client.util.ColorUtils;
+import org.example.bindManager.customcross.client.util.ScreenHelper;
 import org.example.bindManager.customcross.client.util.TargetDetector;
 
 public final class CrosshairRenderer {
@@ -27,7 +28,7 @@ public final class CrosshairRenderer {
     }
 
     public static void render(GuiGraphicsExtractor context, DeltaTracker deltaTracker) {
-        if (CLIENT.gui.screen() != null) return;
+        if (ScreenHelper.getScreen(CLIENT) != null) return;
         if (!CLIENT.options.getCameraType().isFirstPerson()) return;
         if (CLIENT.player != null && CLIENT.player.isSpectator()) return;
 
@@ -141,15 +142,29 @@ public final class CrosshairRenderer {
     }
 
     private static void drawCircle(GuiGraphicsExtractor context, int color, int cx, int cy, float t, float g, float scale) {
-        int r = Math.max(2, Math.round(g + 3.0f * scale));
-        int it = Math.max(1, Math.round(t));
-        int hb = it / 2;
-        int ha = it - hb;
+        float r = Math.max(2.5f, g + 3.0f * scale);
+        float halfT = Math.max(0.5f, t / 2.0f);
+        float rInnerSq = Math.max(0.0f, (r - halfT) * (r - halfT));
+        float rOuterSq = (r + halfT) * (r + halfT);
 
-        context.fill(cx - r - hb, cy - r - hb, cx + r + ha, cy - r + ha, color);
-        context.fill(cx - r - hb, cy + r - hb, cx + r + ha, cy + r + ha, color);
-        context.fill(cx - r - hb, cy - r + ha, cx - r + ha, cy + r - hb, color);
-        context.fill(cx + r - hb, cy - r + ha, cx + r + ha, cy + r - hb, color);
+        int maxR = (int) Math.ceil(r + halfT);
+        for (int dy = -maxR; dy <= maxR; dy++) {
+            int startX = Integer.MIN_VALUE;
+            for (int dx = -maxR; dx <= maxR; dx++) {
+                float distSq = dx * dx + dy * dy;
+                if (distSq >= rInnerSq && distSq <= rOuterSq) {
+                    if (startX == Integer.MIN_VALUE) startX = dx;
+                } else {
+                    if (startX != Integer.MIN_VALUE) {
+                        context.fill(cx + startX, cy + dy, cx + dx, cy + dy + 1, color);
+                        startX = Integer.MIN_VALUE;
+                    }
+                }
+            }
+            if (startX != Integer.MIN_VALUE) {
+                context.fill(cx + startX, cy + dy, cx + maxR + 1, cy + dy + 1, color);
+            }
+        }
     }
 
     private static void drawSquare(GuiGraphicsExtractor context, CrosshairConfig config, int color, int cx, int cy, float t, float g, float scale) {
@@ -189,33 +204,44 @@ public final class CrosshairRenderer {
     }
 
     private static void drawStar(GuiGraphicsExtractor context, int color, int cx, int cy, float scale, float t) {
-        int s = Math.max(2, Math.round(4.0f * scale));
+        int s = Math.max(3, Math.round(5.0f * scale));
         int it = Math.max(1, Math.round(t));
         int hb = it / 2;
         int ha = it - hb;
 
+        // Main arms
         context.fill(cx - s, cy - hb, cx + s + 1, cy + ha, color);
         context.fill(cx - hb, cy - s, cx + ha, cy + s + 1, color);
 
-        int d = Math.max(1, Math.round(s * 0.55f));
-        context.fill(cx - d, cy - d, cx - d + 1, cy - d + 1, color);
-        context.fill(cx + d, cy - d, cx + d + 1, cy - d + 1, color);
-        context.fill(cx - d, cy + d, cx - d + 1, cy + d + 1, color);
-        context.fill(cx + d, cy + d, cx + d + 1, cy + d + 1, color);
+        // Connected diagonal rays
+        int d = Math.max(1, s / 2);
+        for (int i = 1; i <= d; i++) {
+            context.fill(cx - i - hb, cy - i - hb, cx - i + ha, cy - i + ha, color);
+            context.fill(cx + i - hb, cy - i - hb, cx + i + ha, cy - i + ha, color);
+            context.fill(cx - i - hb, cy + i - hb, cx - i + ha, cy + i + ha, color);
+            context.fill(cx + i - hb, cy + i - hb, cx + i + ha, cy + i + ha, color);
+        }
     }
 
     private static void drawChevron(GuiGraphicsExtractor context, int color, int cx, int cy, float t, float l, float g) {
         int ig = Math.round(g);
-        int il = Math.max(1, Math.round(l));
+        int il = Math.max(2, Math.round(l));
         int it = Math.max(1, Math.round(t));
         int hb = it / 2;
         int ha = it - hb;
 
         for (int i = 0; i <= il; i++) {
+            // Top chevron (pointing up ^)
             context.fill(cx - i - hb, cy - ig - il + i - hb, cx - i + ha, cy - ig - il + i + ha, color);
-            context.fill(cx + i - hb, cy - ig - il + i - hb, cx + i + ha, cy - ig - il + i + ha, color);
+            if (i > 0) {
+                context.fill(cx + i - hb, cy - ig - il + i - hb, cx + i + ha, cy - ig - il + i + ha, color);
+            }
+
+            // Bottom chevron (pointing down v)
             context.fill(cx - i - hb, cy + ig + il - i - hb, cx - i + ha, cy + ig + il - i + ha, color);
-            context.fill(cx + i - hb, cy + ig + il - i - hb, cx + i + ha, cy + ig + il - i + ha, color);
+            if (i > 0) {
+                context.fill(cx + i - hb, cy + ig + il - i - hb, cx + i + ha, cy + ig + il - i + ha, color);
+            }
         }
     }
 
