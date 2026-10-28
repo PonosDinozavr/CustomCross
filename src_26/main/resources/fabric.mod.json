@@ -1,0 +1,31 @@
+{
+    "schemaVersion": 1,
+    "id": "customcross",
+    "version": "${version}",
+    "name": "CustomCross",
+    "description": "Fully customizable crosshair mod. Change shape, color, size, thickness, gap, and opacity. Auto-change color when aiming at mobs, players, or blocks. Rainbow mode, pulsing effect, smooth color transitions, and a built-in crosshair library with 20+ presets. Add your own PNG/JPG/GIF crosshairs by placing them in the config/customcross/crosshairs/ folder.",
+    "authors": [
+        "ponos_dinozavr"
+    ],
+    "contact": {
+        "homepage": "https://discord.gg/WThDK2My7e",
+        "sources": "https://github.com/PonosDinozavr/CustomCross/tree/${minecraft_version}",
+        "issues": "https://github.com/PonosDinozavr/CustomCross/issues"
+    },
+    "license": "MIT",
+    "icon": "assets/customcross/avatar.png",
+    "environment": "client",
+    "entrypoints": {
+        "client": [
+            "org.example.bindManager.customcross.client.CustomCrossClient"
+        ],
+        "main": [
+            "org.example.bindManager.customcross.CustomCross"
+        ]
+    },
+    "depends": {
+        "fabricloader": ">=${loader_version}",
+        "fabric-api": "*",
+        "minecraft": "${minecraft_dependency}"
+    }
+}

@@ -16,6 +16,7 @@ Copy-Item "$BaseDir\LICENSE.txt" "$BuildDir\"
 Copy-Item "$BaseDir\.gitignore" "$BuildDir\"
 
 $versions = @{
+    "1.21.5" = @{ yarn = "1.21.5+build.1"; fabric = "0.120.0+1.21.5" }
     "1.21.6" = @{ yarn = "1.21.6+build.1"; fabric = "0.120.0+1.21.6" }
     "1.21.7" = @{ yarn = "1.21.7+build.8"; fabric = "0.128.0+1.21.7" }
     "1.21.8" = @{ yarn = "1.21.8+build.1"; fabric = "0.129.0+1.21.8" }

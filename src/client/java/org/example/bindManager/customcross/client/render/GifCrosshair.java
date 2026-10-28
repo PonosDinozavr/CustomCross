@@ -8,6 +8,7 @@ import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.texture.NativeImageBackedTexture;
 import net.minecraft.util.Identifier;
 import org.example.bindManager.customcross.CustomCross;
+import org.example.bindManager.customcross.client.util.TextureHelper;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
@@ -60,12 +61,19 @@ public final class GifCrosshair {
         if (tex == null) return false;
 
         int size = Math.max((int) (32 * scale), 4);
+        int alpha = Math.max(0, Math.min(255, Math.round(opacity * 255.0f)));
+        int color = (alpha << 24) | 0x00FFFFFF;
+
+        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, opacity);
 
         context.drawTexture(
                 RenderPipelines.GUI_TEXTURED,
                 tex, cx - size / 2, cy - size / 2,
-                0f, 0f, size, size, size, size
+                0f, 0f, size, size, size, size, color
         );
+
+        context.draw();
+        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
         return true;
     }
 
@@ -74,12 +82,19 @@ public final class GifCrosshair {
         if (entry == null) return;
 
         int size = Math.max((int) (32 * scale), 4);
+        int alpha = Math.max(0, Math.min(255, Math.round(opacity * 255.0f)));
+        int color = (alpha << 24) | 0x00FFFFFF;
+
+        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, opacity);
 
         context.drawTexture(
                 RenderPipelines.GUI_TEXTURED,
                 entry.textureId, cx - size / 2, cy - size / 2,
-                0f, 0f, size, size, size, size
+                0f, 0f, size, size, size, size, color
         );
+
+        context.draw();
+        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
     }
 
     private static GifEntry getOrLoad(String assetPath) {
@@ -162,8 +177,9 @@ public final class GifCrosshair {
                     }
                 }
 
-                NativeImageBackedTexture tex = new NativeImageBackedTexture(() -> "customcross", nativeImage);
-                Identifier id = Identifier.of("customcross", "gif_" + Math.abs(assetPath.hashCode()) + "_" + i);
+                String texName = "gif_" + Math.abs(assetPath.hashCode()) + "_" + i;
+                NativeImageBackedTexture tex = TextureHelper.createTexture(texName, nativeImage);
+                Identifier id = Identifier.of("customcross", texName);
                 MinecraftClient.getInstance().getTextureManager().registerTexture(id, tex);
 
                 texList.add(id);
@@ -208,8 +224,9 @@ public final class GifCrosshair {
                 }
             }
 
-            NativeImageBackedTexture tex = new NativeImageBackedTexture(() -> "customcross", nativeImage);
-            Identifier id = Identifier.of("customcross", "static_" + Math.abs(assetPath.hashCode()));
+            String texName = "static_" + Math.abs(assetPath.hashCode());
+            NativeImageBackedTexture tex = TextureHelper.createTexture(texName, nativeImage);
+            Identifier id = Identifier.of("customcross", texName);
             MinecraftClient.getInstance().getTextureManager().registerTexture(id, tex);
 
             PngEntry entry = new PngEntry(assetPath, id);

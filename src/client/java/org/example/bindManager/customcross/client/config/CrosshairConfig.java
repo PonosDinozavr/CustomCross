@@ -26,6 +26,18 @@ public class CrosshairConfig {
     private float pulseSpeed = 1.0f;
     private boolean smoothColorTransition = true;
     private String activeGif = "";
+    private boolean dynamicRecoil = true;
+    private boolean attackCooldownIndicator = true;
+    private boolean bowChargeIndicator = true;
+    private boolean hitSoundEnabled = false;
+    private String profileName = "default";
+    private int canvasSize = 15;
+    private boolean[] pixels = new boolean[15 * 15];
+    public enum MirrorMode { OFF, HORIZONTAL, VERTICAL, BOTH }
+    private MirrorMode mirrorMode = MirrorMode.BOTH;
+
+    public MirrorMode getMirrorMode() { return mirrorMode; }
+    public void setMirrorMode(MirrorMode mode) { this.mirrorMode = mode != null ? mode : MirrorMode.OFF; }
 
     public boolean isCustomEnabled() { return customEnabled; }
     public void setCustomEnabled(boolean v) { this.customEnabled = v; }
@@ -102,6 +114,49 @@ public class CrosshairConfig {
     public String getActiveGif() { return activeGif; }
     public void setActiveGif(String path) { this.activeGif = path != null ? path : ""; }
 
+    public boolean isDynamicRecoil() { return dynamicRecoil; }
+    public void setDynamicRecoil(boolean v) { this.dynamicRecoil = v; }
+
+    public boolean isAttackCooldownIndicator() { return attackCooldownIndicator; }
+    public void setAttackCooldownIndicator(boolean v) { this.attackCooldownIndicator = v; }
+
+    public boolean isBowChargeIndicator() { return bowChargeIndicator; }
+    public void setBowChargeIndicator(boolean v) { this.bowChargeIndicator = v; }
+
+    public boolean isHitSoundEnabled() { return hitSoundEnabled; }
+    public void setHitSoundEnabled(boolean v) { this.hitSoundEnabled = v; }
+
+    public String getProfileName() { return profileName; }
+    public void setProfileName(String name) { this.profileName = name != null ? name : "default"; }
+
+    public int getCanvasSize() { return canvasSize; }
+    public boolean[] getPixels() { if (pixels == null || pixels.length != canvasSize * canvasSize) pixels = new boolean[canvasSize * canvasSize]; return pixels; }
+    public void setPixel(int x, int y, boolean val) {
+        if (pixels == null || pixels.length != canvasSize * canvasSize) pixels = new boolean[canvasSize * canvasSize];
+        if (x >= 0 && x < canvasSize && y >= 0 && y < canvasSize) {
+            pixels[y * canvasSize + x] = val;
+            applyMirror(x, y, val);
+        }
+    }
+
+    private void applyMirror(int x, int y, boolean val) {
+        int mx = canvasSize - 1 - x;
+        int my = canvasSize - 1 - y;
+        if (mirrorMode == MirrorMode.HORIZONTAL || mirrorMode == MirrorMode.BOTH) {
+            pixels[y * canvasSize + mx] = val;
+        }
+        if (mirrorMode == MirrorMode.VERTICAL || mirrorMode == MirrorMode.BOTH) {
+            pixels[my * canvasSize + x] = val;
+        }
+        if (mirrorMode == MirrorMode.BOTH) {
+            pixels[my * canvasSize + mx] = val;
+        }
+    }
+
+    public void clearCanvas() {
+        pixels = new boolean[canvasSize * canvasSize];
+    }
+
     public void reset() {
         customEnabled = true;
         disableVanilla = true;
@@ -128,5 +183,9 @@ public class CrosshairConfig {
         pulseSpeed = 1.0f;
         smoothColorTransition = true;
         activeGif = "";
+        dynamicRecoil = true;
+        attackCooldownIndicator = true;
+        bowChargeIndicator = true;
+        hitSoundEnabled = false;
     }
 }

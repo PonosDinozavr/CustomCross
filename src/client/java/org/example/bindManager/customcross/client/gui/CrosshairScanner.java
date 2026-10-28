@@ -73,7 +73,7 @@ public final class CrosshairScanner {
             c.setLength(5.0f);
             c.setGap(2.0f);
             c.setColor(0xFFFFFFFF);
-            c.setOpacity(0.5f);
+            c.setOpacity(1.0f);
             c.setPulsing(false);
             c.setRainbowMode(false);
             c.setActiveGif("scanned/" + fileName);

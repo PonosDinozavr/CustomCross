@@ -51,7 +51,7 @@ public final class CrosshairLibrary {
     private static Template template(String id, String name) {
         return new Template(id, name, c -> {
             c.setShape(CrosshairShape.CLASSIC); c.setSize(1.0f); c.setThickness(1.0f);
-            c.setLength(5.0f); c.setGap(2.0f); c.setColor(0xFFFFFFFF); c.setOpacity(0.5f);
+            c.setLength(5.0f); c.setGap(2.0f); c.setColor(0xFFFFFFFF); c.setOpacity(1.0f);
             c.setPulsing(false); c.setRainbowMode(false);
             c.setActiveGif("textures/crosshairs/" + id + ".png");
         });
