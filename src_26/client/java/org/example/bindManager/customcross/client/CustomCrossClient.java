@@ -10,9 +10,11 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import org.example.bindManager.customcross.client.config.ConfigManager;
+import org.example.bindManager.customcross.client.config.CrosshairConfig;
 import org.example.bindManager.customcross.client.gui.SettingsScreen;
 import org.example.bindManager.customcross.client.input.KeyBindings;
 import org.example.bindManager.customcross.client.render.CrosshairRenderer;
+import org.example.bindManager.customcross.client.util.ScreenHelper;
 
 public class CustomCrossClient implements ClientModInitializer {
 
@@ -23,10 +25,12 @@ public class CustomCrossClient implements ClientModInitializer {
 
         HudElementRegistry.replaceElement(VanillaHudElements.CROSSHAIR, original -> (extractor, deltaTracker) -> {
             Minecraft client = Minecraft.getInstance();
-            if (client.gui.screen() != null) return;
-            if (ConfigManager.getConfig().isCustomEnabled()) {
+            if (ScreenHelper.getScreen(client) != null) return;
+            CrosshairConfig config = ConfigManager.getConfig();
+            if (config.isCustomEnabled()) {
                 CrosshairRenderer.render(extractor, deltaTracker);
-            } else {
+            }
+            if (!config.isDisableVanilla()) {
                 original.extractRenderState(extractor, deltaTracker);
             }
         });
@@ -43,7 +47,7 @@ public class CustomCrossClient implements ClientModInitializer {
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             if (KeyBindings.settingsKey != null && KeyBindings.settingsKey.consumeClick()) {
-                client.gui.setScreen(new SettingsScreen(client.gui.screen()));
+                ScreenHelper.setScreen(client, new SettingsScreen(ScreenHelper.getScreen(client)));
             }
         });
     }
