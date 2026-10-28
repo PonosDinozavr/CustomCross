@@ -62,6 +62,8 @@ public final class GifCrosshair {
 
         int size = Math.max((int) (32 * scale), 4);
 
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, opacity);
 
         context.drawTexture(
@@ -80,6 +82,8 @@ public final class GifCrosshair {
 
         int size = Math.max((int) (32 * scale), 4);
 
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, opacity);
 
         context.drawTexture(

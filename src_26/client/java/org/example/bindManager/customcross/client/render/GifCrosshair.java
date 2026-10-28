@@ -7,6 +7,7 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.resources.Identifier;
 import org.example.bindManager.customcross.CustomCross;
+import org.example.bindManager.customcross.client.util.BlitHelper;
 import org.example.bindManager.customcross.client.util.TextureHelper;
 
 import javax.imageio.ImageIO;
@@ -68,7 +69,7 @@ public final class GifCrosshair {
         int x0 = cx - size / 2;
         int y0 = cy - size / 2;
 
-        context.blit(tex, x0, y0, x0 + size, y0 + size, 0f, 1f, 0f, 1f);
+        BlitHelper.blit(context, tex, x0, y0, size, opacity);
         return true;
     }
 
@@ -80,7 +81,7 @@ public final class GifCrosshair {
         int x0 = cx - size / 2;
         int y0 = cy - size / 2;
 
-        context.blit(entry.textureId, x0, y0, x0 + size, y0 + size, 0f, 1f, 0f, 1f);
+        BlitHelper.blit(context, entry.textureId, x0, y0, size, opacity);
     }
 
     private static GifEntry getOrLoad(String assetPath) {

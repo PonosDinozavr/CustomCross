@@ -75,6 +75,7 @@ public class ColorPickerWidget extends ClickableWidget {
         updating = false;
     }
 
+
     @Override
     protected void renderWidget(DrawContext context, int mx, int my, float delta) {
         drawSvPicker(context);
