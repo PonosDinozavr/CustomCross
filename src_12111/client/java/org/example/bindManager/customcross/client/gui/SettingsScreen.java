@@ -90,7 +90,6 @@ public class SettingsScreen extends Screen {
 
     @Override
     public void renderBackground(DrawContext ctx, int mx, int my, float delta) {
-        super.renderBackground(ctx, mx, my, delta);
         ctx.fill(0, 0, width, height, 0x88000000);
     }
 
@@ -282,12 +281,12 @@ public class SettingsScreen extends Screen {
 
     private void drawToggle(DrawContext ctx, int x, int y, int w, String key, boolean initial, Consumer<Boolean> onChange, int mx, int my, float delta) {
         var toggle = new ModernWidgets.Toggle(x, y, w, 28, setting(key), initial, onChange);
-        toggle.renderWidget(ctx, mx, my - scrollOffset, delta);
+        toggle.render(ctx, mx, my - scrollOffset, delta);
     }
 
     private void drawSlider(DrawContext ctx, int x, int y, int w, String key, float initial, float min, float max, Consumer<Float> onChange, int mx, int my, float delta) {
         var slider = new ModernWidgets.Slider(x, y, w, 30, label(key), initial, min, max, onChange);
-        slider.renderWidget(ctx, mx, my - scrollOffset, delta);
+        slider.render(ctx, mx, my - scrollOffset, delta);
     }
 
     private int renderGeneral(DrawContext ctx, int cy, int cx, int w, int mx, int my, float delta) {
@@ -424,7 +423,16 @@ public class SettingsScreen extends Screen {
                 ctx.fill(ix - 6, iy - 1, ix + 6, iy + 1, color);
             }
             case DOT -> ctx.fill(ix - 2, iy - 2, ix + 2, iy + 2, color);
-            case CIRCLE -> drawBorder(ctx, ix - 5, iy - 5, 10, 10, color);
+            case CIRCLE -> {
+                ctx.fill(ix - 2, iy - 4, ix + 3, iy - 3, color);
+                ctx.fill(ix - 2, iy + 4, ix + 3, iy + 5, color);
+                ctx.fill(ix - 4, iy - 2, ix - 3, iy + 3, color);
+                ctx.fill(ix + 4, iy - 2, ix + 5, iy + 3, color);
+                ctx.fill(ix - 3, iy - 3, ix - 2, iy - 2, color);
+                ctx.fill(ix + 3, iy - 3, ix + 4, iy - 2, color);
+                ctx.fill(ix - 3, iy + 3, ix - 2, iy + 4, color);
+                ctx.fill(ix + 3, iy + 3, ix + 4, iy + 4, color);
+            }
             case SQUARE -> {
                 ctx.fill(ix - 5, iy - 5, ix + 5, iy - 3, color);
                 ctx.fill(ix - 5, iy + 3, ix + 5, iy + 5, color);
@@ -432,27 +440,46 @@ public class SettingsScreen extends Screen {
                 ctx.fill(ix + 3, iy - 5, ix + 5, iy + 5, color);
             }
             case HEART -> {
-                ctx.fill(ix - 4, iy - 3, ix, iy + 1, color);
-                ctx.fill(ix, iy - 3, ix + 4, iy + 1, color);
-                ctx.fill(ix - 3, iy, ix + 3, iy + 4, color);
+                ctx.fill(ix - 3, iy - 3, ix - 1, iy - 2, color);
+                ctx.fill(ix + 1, iy - 3, ix + 3, iy - 2, color);
+                ctx.fill(ix - 3, iy - 2, ix + 3, iy, color);
+                ctx.fill(ix - 2, iy, ix + 2, iy + 1, color);
+                ctx.fill(ix - 1, iy + 1, ix + 1, iy + 2, color);
+                ctx.fill(ix, iy + 2, ix + 1, iy + 3, color);
             }
             case STAR -> {
-                ctx.fill(ix - 1, iy - 5, ix + 1, iy + 5, color);
-                ctx.fill(ix - 5, iy - 1, ix + 5, iy + 1, color);
-                ctx.fill(ix - 3, iy - 3, ix - 1, iy - 1, color);
-                ctx.fill(ix + 1, iy + 1, ix + 3, iy + 3, color);
+                ctx.fill(ix, iy - 5, ix + 1, iy + 6, color);
+                ctx.fill(ix - 5, iy, ix + 6, iy + 1, color);
+                for (int i = 1; i <= 2; i++) {
+                    ctx.fill(ix - i, iy - i, ix - i + 1, iy - i + 1, color);
+                    ctx.fill(ix + i, iy - i, ix + i + 1, iy - i + 1, color);
+                    ctx.fill(ix - i, iy + i, ix - i + 1, iy + i + 1, color);
+                    ctx.fill(ix + i, iy + i, ix + i + 1, iy + i + 1, color);
+                }
             }
             case CHEVRON -> {
-                ctx.fill(ix - 3, iy - 4, ix - 1, iy - 2, color);
-                ctx.fill(ix + 1, iy - 4, ix + 3, iy - 2, color);
-                ctx.fill(ix - 1, iy - 2, ix + 1, iy, color);
-                ctx.fill(ix - 3, iy + 2, ix - 1, iy + 4, color);
-                ctx.fill(ix + 1, iy + 2, ix + 3, iy + 4, color);
-                ctx.fill(ix - 1, iy, ix + 1, iy + 2, color);
+                ctx.fill(ix, iy - 6, ix + 1, iy - 5, color);
+                ctx.fill(ix - 1, iy - 5, ix, iy - 4, color);
+                ctx.fill(ix + 1, iy - 5, ix + 2, iy - 4, color);
+                ctx.fill(ix - 2, iy - 4, ix - 1, iy - 3, color);
+                ctx.fill(ix + 2, iy - 4, ix + 3, iy - 3, color);
+
+                ctx.fill(ix, iy + 5, ix + 1, iy + 6, color);
+                ctx.fill(ix - 1, iy + 4, ix, iy + 5, color);
+                ctx.fill(ix + 1, iy + 4, ix + 2, iy + 5, color);
+                ctx.fill(ix - 2, iy + 3, ix - 1, iy + 4, color);
+                ctx.fill(ix + 2, iy + 3, ix + 3, iy + 4, color);
             }
             case DUAL -> {
-                ctx.fill(ix - 1, iy - 1, ix + 1, iy + 1, color);
-                drawBorder(ctx, ix - 5, iy - 5, 10, 10, color);
+                ctx.fill(ix - 1, iy - 1, ix + 2, iy + 2, color);
+                ctx.fill(ix - 2, iy - 4, ix + 3, iy - 3, color);
+                ctx.fill(ix - 2, iy + 4, ix + 3, iy + 5, color);
+                ctx.fill(ix - 4, iy - 2, ix - 3, iy + 3, color);
+                ctx.fill(ix + 4, iy - 2, ix + 5, iy + 3, color);
+                ctx.fill(ix - 3, iy - 3, ix - 2, iy - 2, color);
+                ctx.fill(ix + 3, iy - 3, ix + 4, iy - 2, color);
+                ctx.fill(ix - 3, iy + 3, ix - 2, iy + 4, color);
+                ctx.fill(ix + 3, iy + 3, ix + 4, iy + 4, color);
             }
             case PIXEL_CANVAS -> {
                 for (int py = -4; py <= 4; py += 3) {
@@ -595,7 +622,7 @@ public class SettingsScreen extends Screen {
         ctx.fill(x, cy, x + w, cy + 176, BG_CARD);
         drawBorder(ctx, x, cy, w, 176, BORDER);
         var picker = new ColorPickerWidget(x + 4, cy + 4, w - 8, 168, color, setter);
-        picker.renderWidget(ctx, mx, my - scrollOffset, delta);
+        picker.render(ctx, mx, my - scrollOffset, delta);
     }
 
     @Override
