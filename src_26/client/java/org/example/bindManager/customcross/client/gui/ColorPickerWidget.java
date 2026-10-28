@@ -77,6 +77,10 @@ public class ColorPickerWidget extends AbstractWidget {
         updating = false;
     }
 
+    public void render(GuiGraphicsExtractor context, int mx, int my, float delta) {
+        extractWidgetRenderState(context, mx, my, delta);
+    }
+
     @Override
     protected void extractWidgetRenderState(GuiGraphicsExtractor context, int mx, int my, float delta) {
         drawSvPicker(context);

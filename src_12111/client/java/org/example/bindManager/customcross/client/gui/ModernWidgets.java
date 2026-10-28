@@ -2,9 +2,6 @@ package org.example.bindManager.customcross.client.gui;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
-import net.minecraft.client.gui.screen.narration.NarrationPart;
-import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.text.Text;
 import org.example.bindManager.customcross.CustomCross;
@@ -37,14 +34,20 @@ public final class ModernWidgets {
         ctx.fill(x + w - 1, y + 1, x + w, y + h - 1, color);
     }
 
-    public static class Toggle extends ClickableWidget {
+    public static class Toggle {
+        private final int x, y, width, height;
+        private final Text label;
         private boolean toggled;
         private final Consumer<Boolean> onChange;
-        private float knobAnim = 0f;
+        private float knobAnim;
         private float hoverAnim = 0f;
 
         public Toggle(int x, int y, int width, int height, Text label, boolean initial, Consumer<Boolean> onChange) {
-            super(x, y, width, height, label);
+            this.x = x;
+            this.y = y;
+            this.width = width;
+            this.height = height;
+            this.label = label;
             this.toggled = initial;
             this.knobAnim = initial ? 1f : 0f;
             this.onChange = onChange;
@@ -52,39 +55,39 @@ public final class ModernWidgets {
 
         public boolean isToggled() { return toggled; }
 
-        @Override
-        public void onClick(net.minecraft.client.gui.Click click, boolean bl) {
+        public void onClick(double mouseX, double mouseY) {
             playCustomClick();
             toggled = !toggled;
             onChange.accept(toggled);
         }
 
-        @Override
-        public void renderWidget(DrawContext context, int mx, int my, float delta) {
+        public boolean isMouseOver(double mx, double my) {
+            return mx >= x && mx <= x + width && my >= y && my <= y + height;
+        }
+
+        public void render(DrawContext context, int mx, int my, float delta) {
             boolean hovered = isMouseOver(mx, my);
             knobAnim = AnimationUtil.approach(knobAnim, toggled ? 1f : 0f, 10f, delta);
             hoverAnim = AnimationUtil.approach(hoverAnim, hovered ? 1f : 0f, 8f, delta);
 
-            int x = getX(), y = getY(), w = getWidth(), h = getHeight();
-
             // Card background & border
             int bg = AnimationUtil.lerpColor(BG_CARD, BG_CARD_HOVER, hoverAnim);
-            context.fill(x, y, x + w, y + h, bg);
+            context.fill(x, y, x + width, y + height, bg);
 
             int borderCol = toggled ? ACCENT : AnimationUtil.lerpColor(BORDER, BORDER_HOVER, hoverAnim);
-            drawBorder(context, x, y, w, h, borderCol);
+            drawBorder(context, x, y, width, height, borderCol);
 
             if (toggled) {
-                context.fill(x, y, x + 3, y + h, ACCENT);
+                context.fill(x, y, x + 3, y + height, ACCENT);
             }
 
             // Label
             int labelColor = toggled ? TEXT_BRIGHT : AnimationUtil.lerpColor(TEXT_PRIMARY, TEXT_BRIGHT, hoverAnim);
-            context.drawText(MinecraftClient.getInstance().textRenderer, getMessage(), x + 12, y + (h - 8) / 2, labelColor, true);
+            context.drawText(MinecraftClient.getInstance().textRenderer, label, x + 12, y + (height - 8) / 2, labelColor, true);
 
             // Toggle switch pill
             int trackW = 28, trackH = 14;
-            int trackX = x + w - trackW - 10, trackY = y + (h - trackH) / 2;
+            int trackX = x + width - trackW - 10, trackY = y + (height - trackH) / 2;
             int trackColor = AnimationUtil.lerpColor(0xFF2C2C34, 0xFF00B309, knobAnim);
             if (hoverAnim > 0.01f) trackColor = AnimationUtil.lerpColor(trackColor, 0xFF00FF0D, hoverAnim * 0.25f);
             context.fill(trackX, trackY, trackX + trackW, trackY + trackH, trackColor);
@@ -94,14 +97,10 @@ public final class ModernWidgets {
             float knobPos = trackX + 2 + (trackW - knobSize - 4) * knobAnim;
             context.fill((int) knobPos, trackY + 2, (int) (knobPos + knobSize), trackY + trackH - 2, 0xFFFFFFFF);
         }
-
-        @Override
-        protected void appendClickableNarrations(NarrationMessageBuilder builder) {
-            builder.put(NarrationPart.TITLE, Text.literal(getMessage().getString() + ": " + (toggled ? "on" : "off")));
-        }
     }
 
-    public static class Slider extends ClickableWidget {
+    public static class Slider {
+        private final int x, y, width, height;
         private float value;
         private final float min, max;
         private final Text label;
@@ -111,7 +110,10 @@ public final class ModernWidgets {
         private float hoverAnim = 0f;
 
         public Slider(int x, int y, int width, int height, Text label, float initial, float min, float max, Consumer<Float> onChange) {
-            super(x, y, width, height, label);
+            this.x = x;
+            this.y = y;
+            this.width = width;
+            this.height = height;
             this.label = label;
             this.value = initial;
             this.min = min;
@@ -126,35 +128,31 @@ public final class ModernWidgets {
             var tr = MinecraftClient.getInstance().textRenderer;
             int labelW = tr.getWidth(label);
             int valBoxW = 42;
-            int x = getX(), w = getWidth();
             trackX = Math.max(x + 95, x + labelW + 14);
-            int trackRight = x + w - valBoxW - 14;
+            int trackRight = x + width - valBoxW - 14;
             trackWidth = Math.max(40, trackRight - trackX);
         }
 
         public float getValue() { return value; }
         public void setValue(float v) { this.value = clamp(v, min, max); }
 
-        @Override
-        public void renderWidget(DrawContext context, int mx, int my, float delta) {
+        public void render(DrawContext context, int mx, int my, float delta) {
             updateLayout();
             boolean hovered = isMouseOver(mx, my);
             hoverAnim = AnimationUtil.approach(hoverAnim, hovered || dragging ? 1f : 0f, 8f, delta);
 
-            int x = getX(), y = getY(), w = getWidth(), h = getHeight();
-
             // Card background & border
             int bg = AnimationUtil.lerpColor(BG_CARD, BG_CARD_HOVER, hoverAnim);
-            context.fill(x, y, x + w, y + h, bg);
-            drawBorder(context, x, y, w, h, AnimationUtil.lerpColor(BORDER, BORDER_HOVER, hoverAnim));
+            context.fill(x, y, x + width, y + height, bg);
+            drawBorder(context, x, y, width, height, AnimationUtil.lerpColor(BORDER, BORDER_HOVER, hoverAnim));
 
             // Label
             int labelColor = AnimationUtil.lerpColor(TEXT_PRIMARY, TEXT_BRIGHT, hoverAnim);
-            context.drawText(MinecraftClient.getInstance().textRenderer, label, x + 12, y + (h - 8) / 2, labelColor, true);
+            context.drawText(MinecraftClient.getInstance().textRenderer, label, x + 12, y + (height - 8) / 2, labelColor, true);
 
             // Value badge on right
             int valBoxW = 42, valBoxH = 16;
-            int valBoxX = x + w - valBoxW - 10, valBoxY = y + (h - valBoxH) / 2;
+            int valBoxX = x + width - valBoxW - 10, valBoxY = y + (height - valBoxH) / 2;
             context.fill(valBoxX, valBoxY, valBoxX + valBoxW, valBoxY + valBoxH, 0xFF19191E);
             drawBorder(context, valBoxX, valBoxY, valBoxW, valBoxH, 0xFF353540);
             String valStr = formatValue(value);
@@ -163,7 +161,7 @@ public final class ModernWidgets {
                     valBoxX + (valBoxW - strW) / 2, valBoxY + (valBoxH - 8) / 2, TEXT_BRIGHT, true);
 
             // Bounded slider track
-            int trackY = y + h / 2 - 2;
+            int trackY = y + height / 2 - 2;
             float norm = (value - min) / (max - min);
             int fillW = (int) (trackWidth * norm);
 
@@ -192,10 +190,20 @@ public final class ModernWidgets {
             return String.format(Locale.ROOT, "%.2f", v);
         }
 
-        @Override
         public boolean mouseClicked(net.minecraft.client.gui.Click click, boolean bl) {
-            double mx = click.x(), my = click.y();
-            if (active && visible && isMouseOver(mx, my)) {
+            return mouseClicked(click.x(), click.y(), click.button());
+        }
+
+        public boolean mouseDragged(net.minecraft.client.gui.Click click, double dx, double dy) {
+            return mouseDragged(click.x(), click.y(), click.button(), dx, dy);
+        }
+
+        public boolean mouseReleased(net.minecraft.client.gui.Click click) {
+            return mouseReleased(click.x(), click.y(), click.button());
+        }
+
+        public boolean mouseClicked(double mx, double my, int button) {
+            if (isMouseOver(mx, my)) {
                 playCustomClick();
                 dragging = true;
                 applyDelta(mx);
@@ -204,14 +212,12 @@ public final class ModernWidgets {
             return false;
         }
 
-        @Override
-        public boolean mouseDragged(net.minecraft.client.gui.Click click, double dx, double dy) {
-            if (dragging) { applyDelta(click.x()); return true; }
+        public boolean mouseDragged(double mx, double my, int button, double dx, double dy) {
+            if (dragging) { applyDelta(mx); return true; }
             return false;
         }
 
-        @Override
-        public boolean mouseReleased(net.minecraft.client.gui.Click click) {
+        public boolean mouseReleased(double mx, double my, int button) {
             dragging = false;
             return false;
         }
@@ -224,58 +230,10 @@ public final class ModernWidgets {
             onChange.accept(value);
         }
 
-        @Override
         public boolean isMouseOver(double mx, double my) {
-            return mx >= getX() && mx <= getX() + getWidth() && my >= getY() && my <= getY() + getHeight();
-        }
-
-        @Override
-        protected void appendClickableNarrations(NarrationMessageBuilder builder) {
-            builder.put(NarrationPart.TITLE, Text.literal(label.getString() + ": " + formatValue(value)));
+            return mx >= x && mx <= x + width && my >= y && my <= y + height;
         }
 
         private static float clamp(float v, float lo, float hi) { return Math.max(lo, Math.min(hi, v)); }
-    }
-
-    public static class Button extends ClickableWidget {
-        private final Runnable onClick;
-        private final int bgColor;
-        private final int hoverColor;
-        private float hoverAnim = 0f;
-
-        public Button(int x, int y, int width, int height, Text text, int bgColor, int hoverColor, Runnable onClick) {
-            super(x, y, width, height, text);
-            this.bgColor = bgColor;
-            this.hoverColor = hoverColor;
-            this.onClick = onClick;
-        }
-
-        @Override
-        public void onClick(net.minecraft.client.gui.Click click, boolean bl) { playCustomClick(); onClick.run(); }
-
-        @Override
-        public void renderWidget(DrawContext context, int mx, int my, float delta) {
-            hoverAnim = AnimationUtil.approach(hoverAnim, isMouseOver(mx, my) ? 1f : 0f, 10f, delta);
-            int color = AnimationUtil.lerpColor(bgColor, hoverColor, hoverAnim);
-            int x = getX(), y = getY(), w = getWidth(), h = getHeight();
-            context.fill(x, y, x + w, y + h, color);
-            drawBorder(context, x, y, w, h, AnimationUtil.lerpColor(BORDER, BORDER_HOVER, hoverAnim));
-            var tr = MinecraftClient.getInstance().textRenderer;
-            context.drawText(tr, getMessage(), x + (w - tr.getWidth(getMessage())) / 2, y + (h - 8) / 2, TEXT_BRIGHT, true);
-        }
-
-        @Override
-        protected void appendClickableNarrations(NarrationMessageBuilder builder) { builder.put(NarrationPart.TITLE, getMessage()); }
-    }
-
-    public static class CategoryHeader extends ClickableWidget {
-        public CategoryHeader(int x, int y, int width, int height, Text text) { super(x, y, width, height, text); }
-        @Override
-        protected void renderWidget(DrawContext context, int mx, int my, float delta) {
-            context.fill(getX(), getY(), getX() + getWidth(), getY() + getHeight(), 0xFF1C1C22);
-            context.drawText(MinecraftClient.getInstance().textRenderer, getMessage(), getX() + 8, getY() + 6, ACCENT, true);
-        }
-        @Override public boolean mouseClicked(net.minecraft.client.gui.Click click, boolean bl) { return false; }
-        @Override protected void appendClickableNarrations(NarrationMessageBuilder builder) {}
     }
 }

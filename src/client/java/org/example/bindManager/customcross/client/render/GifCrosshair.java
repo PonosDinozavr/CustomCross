@@ -61,13 +61,15 @@ public final class GifCrosshair {
         if (tex == null) return false;
 
         int size = Math.max((int) (32 * scale), 4);
+        int alpha = Math.max(0, Math.min(255, Math.round(opacity * 255.0f)));
+        int color = (alpha << 24) | 0x00FFFFFF;
 
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, opacity);
 
         context.drawTexture(
                 net.minecraft.client.render.RenderLayer::getGuiTextured,
                 tex, cx - size / 2, cy - size / 2,
-                0, 0, size, size, size, size
+                0f, 0f, size, size, size, size, color
         );
 
         context.draw();
@@ -80,13 +82,15 @@ public final class GifCrosshair {
         if (entry == null) return;
 
         int size = Math.max((int) (32 * scale), 4);
+        int alpha = Math.max(0, Math.min(255, Math.round(opacity * 255.0f)));
+        int color = (alpha << 24) | 0x00FFFFFF;
 
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, opacity);
 
         context.drawTexture(
                 net.minecraft.client.render.RenderLayer::getGuiTextured,
                 entry.textureId, cx - size / 2, cy - size / 2,
-                0, 0, size, size, size, size
+                0f, 0f, size, size, size, size, color
         );
 
         context.draw();

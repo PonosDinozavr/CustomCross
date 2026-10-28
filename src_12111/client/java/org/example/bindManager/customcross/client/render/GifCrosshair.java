@@ -67,7 +67,7 @@ public final class GifCrosshair {
         context.drawTexture(
                 net.minecraft.client.gl.RenderPipelines.GUI_TEXTURED,
                 tex, cx - size / 2, cy - size / 2,
-                0, 0, size, size, size, size
+                0f, 0f, size, size, size, size, ((Math.max(0, Math.min(255, Math.round(opacity * 255.0f)))) << 24) | 0x00FFFFFF
         );
 
         
@@ -86,7 +86,7 @@ public final class GifCrosshair {
         context.drawTexture(
                 net.minecraft.client.gl.RenderPipelines.GUI_TEXTURED,
                 entry.textureId, cx - size / 2, cy - size / 2,
-                0, 0, size, size, size, size
+                0f, 0f, size, size, size, size, ((Math.max(0, Math.min(255, Math.round(opacity * 255.0f)))) << 24) | 0x00FFFFFF
         );
 
         
